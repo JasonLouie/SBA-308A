@@ -1,0 +1,1 @@
+// Handle user signup, creating new user, new settings, etc.

@@ -1,1 +1,0 @@
-// Create a guess the character or animal web page.

@@ -3,13 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Character!</title>
+    <title>Guess the Anime Character!</title>
+    <link rel="stylesheet" href="./styles.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="module" src="./apicalls.js"></script>
-    <script type="module" src="./index.js"></script>
-    <script type="module" src="./website.js"></script>
+    <script type="module" src="./constants/constants.js"></script>
+    <script type="module" src="./scripts/apicalls.js"></script>
+    <script type="module" src="./scripts/index.js"></script>
+    <script type="module" src="./scripts/website.js"></script>
+    <script type="module" src="./scripts/login.js"></script>
+    <script type="module" src="./scripts/signup.js"></script>
 </head>
-<body>
-    
+<body class="dark-mode">
+    <header>
+        <nav>
+            <h1>Anime Guesser</h1>
+            <button type="button" id="settingsBtn" class="navButton"></button>
+            <button type="button" id="instructionsBtn" class="navButton">?</button>
+            <div id="loginSignUp">
+                <p><a href="#" id="loginNav">Login</a> or <a href="#" id="signupNav">Sign Up</a></p>
+            </div>
+        </nav>
+    </header>
+    <main id="container">
+        <div id="game">
+            <select name="anime-selector" id="anime-selector"></select>
+            <img src="" alt="Anime Photo" id="anime-pic">
+            <button type="button" id="anime">Click me to get anime stuff!</button>
+        </div>
+        <div id="overlay" class="hidden"></div>
+    </main>
 </body>
 </html>

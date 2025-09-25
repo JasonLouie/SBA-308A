@@ -1,0 +1,140 @@
+body {
+    margin: 0;
+}
+
+body.dark-mode {
+    background-color: #000;
+}
+
+body.dark-mode nav {
+    background-color: #303030;
+    border-top: 1px solid #494949;
+    border-bottom: 1px solid #494949;
+}
+
+.dark-mode {
+    color: white;
+}
+
+a {
+    color: inherit;
+    font-family: inherit;
+    text-decoration: none;
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Navbar styling */
+nav {
+    position: relative;
+    height: 48px;
+}
+
+nav > * {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+nav > h1 {
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+}
+
+.navButton {
+    color: inherit;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 50%;
+    transition: filter 0.3s ease-in;
+}
+
+.navButton:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+}
+
+#settingsBtn {
+    border: none;
+    right: 180px;
+    width: 35px;
+    height: 35px;
+    background-image: url(./images/settings-dark.png);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: 84% auto;
+}
+
+#instructionsBtn {
+    border: 2px solid white;
+    right: 140px;
+    width: 30px;
+    height: 30px;
+}
+
+#loginSignUp {
+    position: absolute;
+    right: 10px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Game styling */
+select#anime-selector,
+::picker(select) {
+    appearance: base-select;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+select#anime-selector:open::picker-icon {
+    rotate: 180deg;
+}
+
+select#anime-selector {
+    width: 300px;
+    box-sizing: border-box;
+    border: 2px solid rgb(9, 71, 53);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font: inherit;
+    font-size: inherit;
+    transition: rotate 0.4s ease-in-out;
+}
+
+option#anime-option {
+    width: 300px;
+    height: 40px;
+    word-wrap: normal;
+}
+
+#anime {
+    margin-top: 10px;
+    display: block;
+}
+
+#anime-pic {
+    display: block;
+    height: 400px;
+    width: auto;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Use selected or unselected class for form mode later on! */
