@@ -1,9 +1,11 @@
 body {
     margin: 0;
+    background-color: #eeeeee;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
-
+/* Dark mode styling */
 body.dark-mode {
-    background-color: #000;
+    background-color: #000000;
 }
 
 body.dark-mode nav {
@@ -13,13 +15,36 @@ body.dark-mode nav {
 }
 
 .dark-mode {
-    color: white;
+    color: #ffffff;
+}
+
+body.dark-mode a:hover {
+    filter: brightness(80%);
+}
+
+body.dark-mode #settings-btn {
+    background-image: url(./images/settings-dark.png);
+}
+
+body.dark-mode #instructions-btn {
+    border-color: #ffffff;
+}
+
+nav {
+    background-color: #d0d0d0;
+    border-top: 1px solid #c4c4c4;
+    border-bottom: 1px solid #c4c4c4;
 }
 
 a {
     color: inherit;
     font-family: inherit;
     text-decoration: none;
+    transition: filter 0.2s ease-in;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 #container {
@@ -47,43 +72,45 @@ nav > h1 {
     margin: 0;
 }
 
-.navButton {
+.nav-button {
     color: inherit;
     background-color: rgba(0, 0, 0, 0);
     border-radius: 50%;
-    transition: filter 0.3s ease-in;
+    transition: filter 0.2s ease-in;
 }
 
-.navButton:hover {
+.nav-button:hover {
     filter: brightness(80%);
     cursor: pointer;
 }
 
-#settingsBtn {
+#settings-btn {
     border: none;
     right: 180px;
     width: 35px;
     height: 35px;
-    background-image: url(./images/settings-dark.png);
+    background-image: url(./images/settings-light.png);
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: 84% auto;
 }
 
-#instructionsBtn {
-    border: 2px solid white;
+#instructions-btn {
+    border: 2px solid #000000;
     right: 140px;
     width: 30px;
     height: 30px;
+    font-weight: bold;
 }
 
-#loginSignUp {
+#login-signup-nav {
     position: absolute;
     right: 10px;
 }
 
 .hidden {
     display: none !important;
+    visibility: hidden;
 }
 
 /* Game styling */
@@ -135,6 +162,117 @@ option#anime-option {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.7);
+    transition: visibility 0.3s ease-in;
+}
+
+#overlay h1 {
+    margin: 0 0 10px 0;
+    padding-bottom: 10px;
+    text-align: center;
+    width: 100%;
+    top: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 44px;
+    border-bottom: 1px dotted #494949;
 }
 
 /* Use selected or unselected class for form mode later on! */
+
+body.dark-mode #settings-container {
+    background-color: #303030;
+}
+
+#settings-container {
+    position: relative;
+    height: 500px;
+    width: 450px;
+    background-color: #c0c0c0;
+    border-radius: 20px;
+}
+
+#settings-container > * {
+    position: absolute;
+}
+
+#settings-list {
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+}
+
+.settings:first-child {
+    margin-top: 20px;
+}
+
+.settings {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.setting-name {
+    position: relative;
+    width: fit-content;
+    font-size: 24px;
+    margin: 0;
+    cursor: default;
+}
+
+.setting-desc {
+    position: absolute;
+    font-size: 14px;
+    top: 100%;
+    left: 0;
+    padding: 6px;
+    border-radius: 8px;
+    min-width: 220px;
+    background-color: rgba(0, 0, 0, 0.288);
+}
+
+.setting-desc::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 20%;
+    transform: translateX(-20%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
+
+.option {
+    width: 100px;
+    height: 50px;
+    position: relative;
+    border-radius: 24px;
+    background-color: rgb(71, 9, 0);
+    transition: background-color 0.2s ease-in-out;
+    border: 1px solid black;
+}
+
+.option > button {
+    position: absolute;
+    left: 0px;
+    border-radius: 22px;
+    height: 50px;
+    width: 60px;
+    border: none;
+    transition: transform 0.2s ease-in-out filter 0.2s ease;
+}
+
+.option > button:hover {
+    cursor: pointer;
+    filter: brightness(90%);
+}
+
+div.on {
+    background-color: rgb(9, 71, 53);
+}
+
+button.on {
+    transform: translateX(40px);
+}

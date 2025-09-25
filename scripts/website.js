@@ -1,9 +1,15 @@
 // Update website based on api calls or user interaction
-import {getAnimeList, getAnimeCharacters} from "./apicalls.js";
-import {handleLoginSignUp} from "./overlay.js";
+import { getAnimeList, getAnimeCharacters } from "./apicalls.js";
+import { handleLoginSignUp, handleOpenNavElement } from "./overlay.js";
 
-const loginAnchor = document.getElementById("loginNav");
-const signupAnchor = document.getElementById("signupNav");
+const loginAnchor = document.getElementById("login-nav");
+const signupAnchor = document.getElementById("signup-nav");
+const navBtns = document.getElementsByClassName("nav-button");
+
+for (const navBtn of navBtns) {
+    navBtn.addEventListener("click", handleOpenNavElement);
+}
+
 const animePic = document.getElementById("anime-pic");
 
 loginAnchor.addEventListener("click", handleLoginSignUp);
@@ -20,7 +26,7 @@ animeButton.addEventListener("click", async () => {
 
     const characters = getAnimeCharacters(randomAnime.mal_id);
     console.log(characters);
-    
+
 
     function chooseRandomAnime() {
         const index = Math.floor(Math.random() * result.data.length);

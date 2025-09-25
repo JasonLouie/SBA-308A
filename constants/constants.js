@@ -1,3 +1,5 @@
+export { defaultSettings };
+
 const loginInputs = [
     { type: "text", name: "username", placeholder: "Username", className: "field", autocomplete: "username" },
     { type: "password", name: "password", placeholder: "Password", className: "field", autocomplete: "current-password" },
@@ -15,16 +17,18 @@ const signUpInnerHTML = `Already have an account? <a href="#" class="login">Logi
 const signUpButtonText = "Sign Up";
 
 const settings = [
-    {id: "dark-mode", classList: "settings", textContent: "Dark Mode", isOn: true},
-    {id: "game-mode", classList: "settings", textContent: "Game Mode", modes: ["Character", "Anime", "Manga"], choice: 0},
-    {id: "hints", classList: "settings", textContent: "Show Hints", isOn: true, description: "Show hints after each wrong guess."},
-    {id: "blur", classList: "settings", textContent: "Enable Blur", isOn: false, description: "Image is blurred and unblurs after each wrong guess if hints are enabled."},
-    {id: "colors", classList: "settings", textContent: "Show Photo Colors", isOn: true}
-]
+    { id: "dark-mode", classList: "settings", textContent: "Dark Mode", isOn: true, description: "Toggle between Dark and Light Mode" },
+    { id: "hints", classList: "settings", textContent: "Show Hints", isOn: true, description: "Show hints after each wrong guess" },
+    { id: "blur", classList: "settings", textContent: "Enable Blur", isOn: false, description: "Image is blurred and unblurs after each wrong guess if hints are on" },
+    { id: "colors", classList: "settings", textContent: "Show Photo Colors", isOn: true, description: "Toggle between showing black and white or regular photo colors" }
+];
+
+const defaultSettings = {"dark-mode": true, "hints": true, "blur": false, "colors": true};
 
 const overlayDict = {
-    login: { inputs: loginInputs, innerHTML: loginInnerHTML, buttonText: loginButtonText},
-    signup: { inputs: signUpInputs, innerHTML: signUpInnerHTML, buttonText: signUpButtonText }
+    login: { inputs: loginInputs, innerHTML: loginInnerHTML, buttonText: loginButtonText },
+    signup: { inputs: signUpInputs, innerHTML: signUpInnerHTML, buttonText: signUpButtonText },
+    settings: settings
 };
 
 export default overlayDict;

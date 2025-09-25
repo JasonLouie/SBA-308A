@@ -1,11 +1,11 @@
 // Make a recursive function for creating elements given an array of objects
 import overlayDict from "../constants/constants.js";
+import { userSettings } from "./index.js";
 const overlayDiv = document.getElementById("overlay");
-export { overlayDiv };
 
 // Handle opening login or signup form
 export function handleLoginSignUp(e) {
-    if (e.target.localName === "a"){
+    if (e.target.localName === "a") {
         e.preventDefault();
         createOverlay(e.target.textContent.replace(" ", "").toLowerCase());
     }
@@ -13,9 +13,9 @@ export function handleLoginSignUp(e) {
 
 // Handle opening instructions and settings overlay
 export function handleOpenNavElement(e) {
-    if (e.target.id === "settingsBtn"){
+    if (e.target.classList.contains("nav-button")) {
         e.preventDefault();
-        createOverlay(e.target.id.slice(-3));
+        createOverlay(e.target.id.slice(0, -4));
     }
 }
 
@@ -31,8 +31,8 @@ function createForm(type) {
 
     // Create form mode indicator
     const formMode = form.appendChild(Object.assign(document.createElement("div"), { id: "form-mode" }));
-    formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "login") ? "selected" : "unselected"}` }));
-    formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "signup") ? "selected" : "unselected"}` }));
+    formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "login") ? "selected" : "unselected"}`, textContent: "Login" }));
+    formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "signup") ? "selected" : "unselected"}`, textContent: "Sign Up" }));
 
     // Create inputs
     createInputs(overlayDict[type].inputs, form);
@@ -57,6 +57,72 @@ function createForm(type) {
 }
 
 // Creates the settings overlay
+function createSettings() {
+    const frag = new DocumentFragment();
+
+    // Create the container
+    const settingsContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "settings-container" }));
+
+    // Create the h1
+    settingsContainer.appendChild(Object.assign(document.createElement("h1"), { textContent: "Settings" }));
+
+    // Create the div that holds all settings
+    const settingsList = settingsContainer.appendChild(Object.assign(document.createElement("div"), { id: "settings-list" }));
+
+    // Populate the div's contents
+    overlayDict["settings"].forEach(setting => {
+        // Outer div for setting
+        const settingDiv = settingsList.appendChild(Object.assign(document.createElement("div"), { id: setting.id, classList: setting.classList }));
+
+        // p containing name of the setting
+        const settingName = settingDiv.appendChild(Object.assign(document.createElement("p"), { textContent: setting.textContent, classList: "setting-name" }));
+
+        // Add tooltip to setting name
+        settingName.appendChild(Object.assign(document.createElement("span"), { textContent: setting.description, classList: "setting-desc hidden" }));
+
+        // Add event listener to show/hide tooltip
+        settingName.addEventListener("mouseover", showToolTip);
+        settingName.addEventListener("mouseout", showToolTip);
+
+        // Create the option
+        const optionDiv = settingDiv.appendChild(Object.assign(document.createElement("div"), { classList: `option${(userSettings[setting.id]) ? " on" : ""}` }));
+        const optionBtn = optionDiv.appendChild(Object.assign(document.createElement("button"), { classList: `option-btn${(userSettings[setting.id]) ? " on" : ""}` }));
+
+        // Add event listener to toggle setting on/off
+        optionBtn.addEventListener("click", (e) => {
+            if (e.target === e.currentTarget) {
+                e.target.classList.toggle("on");
+                e.target.parentElement.classList.toggle("on");
+                const setting = e.target.parentElement.parentElement.id;
+                userSettings[setting] = !userSettings[setting];
+
+                switch (setting) {
+                    case "dark-mode":
+                        document.body.classList.toggle("dark-mode");
+                        break;
+                    case "hints":
+
+                        break;
+                    case "blur":
+
+                        break;
+                    case "colors":
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    });
+    overlayDiv.append(frag);
+
+    function showToolTip(e) {
+        if (e.target === e.currentTarget) {
+            e.target.children[0].classList.toggle("hidden");
+        }
+    }
+}
 
 // Creates the instructions overlay
 
@@ -67,11 +133,11 @@ export function createOverlay(type) {
     if (type === "login" || type === "signup") { // Login/signup form
         createForm(type);
     } else if (type === "settings") {
-
+        createSettings();
     } else if (type === "instructions") {
 
     }
-    
+
 }
 
 function clearOverlay() {

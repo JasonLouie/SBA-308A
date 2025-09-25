@@ -1,6 +1,8 @@
 // Main file
-import { overlayDiv } from "./overlay.js";
+import { defaultSettings } from "../constants/constants.js";
+// Create a copy of the default settings for the user
+export const userSettings = {...defaultSettings};
 
-function initLoad() {
+async function initLoad() {
     
 }
