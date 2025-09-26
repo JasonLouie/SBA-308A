@@ -19,7 +19,7 @@ const signUpButtonText = "Sign Up";
 const settings = [
     { id: "dark-mode", classList: "settings", textContent: "Dark Mode", isOn: true, description: "Toggle between Dark and Light Mode" },
     { id: "hints", classList: "settings", textContent: "Show Hints", isOn: true, description: "Show hints after each wrong guess" },
-    { id: "blur", classList: "settings", textContent: "Enable Blur", isOn: false, description: "Image is blurred and unblurs after each wrong guess if hints are on" },
+    { id: "blur", classList: "settings", textContent: "Enable Image Blur", isOn: false, description: "Image is blurred and slightly unblurs after each guess if hints are on" },
     { id: "colors", classList: "settings", textContent: "Show Photo Colors", isOn: true, description: "Toggle between showing black and white or regular photo colors" }
 ];
 

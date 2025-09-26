@@ -3,6 +3,11 @@ body {
     background-color: #eeeeee;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
+body * {
+    box-sizing: border-box;
+}
+
 /* Dark mode styling */
 body.dark-mode {
     background-color: #000000;
@@ -34,6 +39,7 @@ nav {
     background-color: #d0d0d0;
     border-top: 1px solid #c4c4c4;
     border-bottom: 1px solid #c4c4c4;
+    margin-bottom: 20px;
 }
 
 a {
@@ -110,7 +116,9 @@ nav > h1 {
 
 .hidden {
     display: none !important;
-    visibility: hidden;
+    visibility: hidden !important;
+    opacity: 0;
+    transition: visibility 0.3s ease-in opacity 0.3 ease-in;
 }
 
 /* Game styling */
@@ -129,6 +137,7 @@ select#anime-selector {
     width: 300px;
     box-sizing: border-box;
     border: 2px solid rgb(9, 71, 53);
+    margin-bottom: 10px;
     border-radius: 6px;
     padding: 5px 8px;
     font: inherit;
@@ -142,17 +151,20 @@ option#anime-option {
     word-wrap: normal;
 }
 
-#anime {
-    margin-top: 10px;
-    display: block;
-}
-
 #anime-pic {
     display: block;
     height: 400px;
     width: auto;
 }
 
+#anime {
+    margin-top: 10px;
+    border-radius: 6px;
+    padding: 4px;
+    display: block;
+}
+
+/* Overlay styling */
 #overlay {
     position: absolute;
     top: 0;
@@ -162,32 +174,185 @@ option#anime-option {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.7);
-    transition: visibility 0.3s ease-in;
+    transition: visibility 0.3s ease-in opacity 0.3 ease-in;
 }
 
-#overlay h1 {
+.div-menu-container h1 {
+    position: absolute;
     margin: 0 0 10px 0;
     padding-bottom: 10px;
     text-align: center;
     width: 100%;
-    top: 34px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 44px;
     border-bottom: 1px dotted #494949;
 }
 
-/* Use selected or unselected class for form mode later on! */
-
-body.dark-mode #settings-container {
+body.dark-mode .div-menu-container {
     background-color: #303030;
 }
 
-#settings-container {
+.div-menu-container {
     position: relative;
+    background-color: #c0c0c0;
+}
+
+/* General form styling */
+#form-container {
+    border-radius: 20px;
+    height: 500px;
+    width: 420px;
+}
+
+#form-mode,
+.field,
+.field-error,
+#form-submit,
+#text-recommend,
+#login-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#form-mode {
+    top: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    width: 240px;
+    border: 2px solid;
+    border-radius: 20px;
+}
+
+#form-mode > p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    height: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 18px;
+}
+
+.selected {
+    width: 60%;
+}
+
+.unselected {
+    width: 40%;
+}
+
+#form-mode > p:first-child.selected {
+    background-color: aqua;
+}
+
+#form-mode > p:last-child.selected {
+    background-color: aqua;
+}
+
+.field,
+.field-error,
+#text-recommend {
+    margin: 0;
+    width: 240px;
+}
+
+.field {
+    border-radius: 10px;
+    padding: 3px 8px;
+    height: 30px;
+}
+
+.field-error {
+    color: red;
+}
+
+#form-submit {
+    box-sizing: border-box;
+    border-radius: 10px;
+    bottom: 60px;
+    height: 40px;
+    width: 240px;
+    transition: filter 0.2s ease;
+}
+
+#form-submit:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+}
+
+#text-recommend {
+    text-align: center;
+    bottom: 24px;
+}
+
+#login-form, #signup-form {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* Login form styling */
+#login-logo {
+    top: 160px;
+    height: 80px;
+    width: auto;
+}
+
+#login-form > #usernameError {
+    top: 290px;
+}
+
+#login-form > #passwordError {
+    top: 360px;
+}
+
+#login-form > [name="username"] {
+    top: 255px;
+}
+
+#login-form > [name="password"] {
+    top: 325px;
+}
+
+/* Sign Up form styling */
+#signup-form > #usernameError {
+    top: 208px;
+}
+
+#signup-form > #emailError {
+    top: 268px;
+}
+
+#signup-form > #passwordError {
+    top: 328px;
+}
+
+#signup-form > [name="username"] {
+    top: 175px;
+}
+
+#signup-form > [name="email"] {
+    top: 235px;
+}
+
+#signup-form > [name="password"] {
+    top: 295px;
+}
+
+#signup-form > [name="confirmPassword"] {
+    top: 355px;
+}
+
+/* Settings overlay styling */
+#settings-container {
     height: 500px;
     width: 450px;
-    background-color: #c0c0c0;
     border-radius: 20px;
 }
 
@@ -196,14 +361,15 @@ body.dark-mode #settings-container {
 }
 
 #settings-list {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    height: 300px;
     top: 100px;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
-}
-
-.settings:first-child {
-    margin-top: 20px;
 }
 
 .settings {
@@ -211,7 +377,6 @@ body.dark-mode #settings-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
 }
 
 .setting-name {
@@ -228,9 +393,9 @@ body.dark-mode #settings-container {
     top: 100%;
     left: 0;
     padding: 6px;
-    border-radius: 8px;
-    min-width: 220px;
-    background-color: rgba(0, 0, 0, 0.288);
+    border-radius: 10px;
+    width: 240px;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .setting-desc::after {
@@ -241,12 +406,13 @@ body.dark-mode #settings-container {
     transform: translateX(-20%);
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent black transparent;
+    border-color: transparent transparent rgba(0, 0, 0, 0.2) transparent;
 }
 
-.option {
-    width: 100px;
-    height: 50px;
+.setting-option {
+    box-sizing: content-box;
+    width: 80px;
+    height: 40px;
     position: relative;
     border-radius: 24px;
     background-color: rgb(71, 9, 0);
@@ -254,17 +420,18 @@ body.dark-mode #settings-container {
     border: 1px solid black;
 }
 
-.option > button {
+.setting-option-btn {
     position: absolute;
-    left: 0px;
-    border-radius: 22px;
-    height: 50px;
-    width: 60px;
+    left: 0;
+    top: 0;
+    border-radius: 24px;
+    height: 40px;
+    width: 50px;
     border: none;
     transition: transform 0.2s ease-in-out filter 0.2s ease;
 }
 
-.option > button:hover {
+.setting-option-btn:hover {
     cursor: pointer;
     filter: brightness(90%);
 }
@@ -274,5 +441,5 @@ div.on {
 }
 
 button.on {
-    transform: translateX(40px);
+    transform: translateX(30px);
 }

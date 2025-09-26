@@ -9,7 +9,7 @@
     <script type="module" src="./constants/constants.js"></script>
     <script type="module" src="./scripts/apicalls.js"></script>
     <script type="module" src="./scripts/index.js"></script>
-    <script type="module" src="./scripts/website.js"></script>
+    <script type="module" src="./scripts/game.js"></script>
     <script type="module" src="./scripts/login.js"></script>
     <script type="module" src="./scripts/signup.js"></script>
 </head>
@@ -20,7 +20,7 @@
             <button type="button" id="settings-btn" class="nav-button"></button>
             <button type="button" id="instructions-btn" class="nav-button">?</button>
             <div id="login-signup-nav">
-                <p><a href="#" id="login-nav">Login</a> or <a href="#" id="signup-nav">Sign Up</a></p>
+                <p><a href="#" id="login-nav" class="nav-anchor">Login</a> or <a href="#" id="signup-nav" class="nav-anchor">Sign Up</a></p>
             </div>
         </nav>
     </header>
@@ -28,7 +28,8 @@
         <div id="game">
             <select name="anime-selector" id="anime-selector"></select>
             <img src="" alt="Anime Photo" id="anime-pic">
-            <button type="button" id="anime">Click me to get anime stuff!</button>
+            <input type="text" name="anime-guess" id="user-guess" placeholder="Enter character name">
+            <button type="button" id="anime">Click me to generate an anime character!</button>
         </div>
         <div id="overlay" class="hidden"></div>
     </main>

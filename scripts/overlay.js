@@ -23,7 +23,7 @@ export function handleOpenNavElement(e) {
 function createForm(type) {
     clearOverlay();
     const frag = new DocumentFragment();
-    const formContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "form-container" }));
+    const formContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "form-container", classList: "div-menu-container" }));
     const form = formContainer.appendChild(Object.assign(document.createElement("form"), { id: `${type}-form` }));
 
     // Create h1 as a form type indicator
@@ -34,12 +34,17 @@ function createForm(type) {
     formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "login") ? "selected" : "unselected"}`, textContent: "Login" }));
     formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "signup") ? "selected" : "unselected"}`, textContent: "Sign Up" }));
 
+    // Show logo only for login form
+    if (type === "login"){
+        form.appendChild(Object.assign(document.createElement("img"), { src: "", alt: "logo", id: "login-logo" }));
+    }
+
     // Create inputs
     createInputs(overlayDict[type].inputs, form);
 
     // Create the submit button and recommendation
     form.appendChild(Object.assign(document.createElement("button"), { type: "submit", id: "form-submit", textContent: `${overlayDict[type].buttonText}` }));
-    form.appendChild(Object.assign(document.createElement("p"), { innerHTML: `${overlayDict[type].innerHTML}` }));
+    form.appendChild(Object.assign(document.createElement("p"), { id: "text-recommend", innerHTML: `${overlayDict[type].innerHTML}` }));
     overlayDiv.appendChild(frag);
 
     // Add event listener to the anchor tag of the form (to switch modes)
@@ -61,7 +66,7 @@ function createSettings() {
     const frag = new DocumentFragment();
 
     // Create the container
-    const settingsContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "settings-container" }));
+    const settingsContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "settings-container", classList: "div-menu-container" }));
 
     // Create the h1
     settingsContainer.appendChild(Object.assign(document.createElement("h1"), { textContent: "Settings" }));
@@ -85,8 +90,8 @@ function createSettings() {
         settingName.addEventListener("mouseout", showToolTip);
 
         // Create the option
-        const optionDiv = settingDiv.appendChild(Object.assign(document.createElement("div"), { classList: `option${(userSettings[setting.id]) ? " on" : ""}` }));
-        const optionBtn = optionDiv.appendChild(Object.assign(document.createElement("button"), { classList: `option-btn${(userSettings[setting.id]) ? " on" : ""}` }));
+        const optionDiv = settingDiv.appendChild(Object.assign(document.createElement("div"), { classList: `setting-option${(userSettings[setting.id]) ? " on" : ""}` }));
+        const optionBtn = optionDiv.appendChild(Object.assign(document.createElement("button"), { classList: `setting-option-btn${(userSettings[setting.id]) ? " on" : ""}` }));
 
         // Add event listener to toggle setting on/off
         optionBtn.addEventListener("click", (e) => {

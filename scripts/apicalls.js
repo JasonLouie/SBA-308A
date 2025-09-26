@@ -25,12 +25,10 @@ axios.interceptors.response.use(function onFullfilled(response) {
 
 export async function getAnimeList() {
     const response = await axios.get(`/anime?type=tv&min_score=7&order_by=mal_id`);
-    console.log(response);
     return response.data;
 }
 
 export async function getAnimeCharacters(animeId) {
     const response = await axios.get(`/anime/${animeId}/characters`);
-    console.log(response);
     return response.data;
 }
