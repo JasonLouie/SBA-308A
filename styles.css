@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background-color: #eeeeee;
+    background-color: #caf0f8;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -10,21 +10,11 @@ body * {
 
 /* Dark mode styling */
 body.dark-mode {
-    background-color: #000000;
-}
-
-body.dark-mode nav {
-    background-color: #303030;
-    border-top: 1px solid #494949;
-    border-bottom: 1px solid #494949;
+    background-color: #0d1b2a;
 }
 
 .dark-mode {
     color: #ffffff;
-}
-
-body.dark-mode a:hover {
-    filter: brightness(80%);
 }
 
 body.dark-mode #settings-btn {
@@ -35,12 +25,19 @@ body.dark-mode #instructions-btn {
     border-color: #ffffff;
 }
 
+body.dark-mode nav {
+    background-color: #1b263b;
+    border-top: 1px solid #415a77;
+    border-bottom: 1px solid #415a77;
+}
 nav {
-    background-color: #d0d0d0;
-    border-top: 1px solid #c4c4c4;
-    border-bottom: 1px solid #c4c4c4;
+    background-color: #90e0ef;
+    border-top: 1px solid #00b4d8;
+    border-bottom: 1px solid #00b4d8;
     margin-bottom: 20px;
 }
+
+
 
 a {
     color: inherit;
@@ -51,6 +48,10 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+body.dark-mode a:hover {
+    filter: brightness(80%);
 }
 
 #container {
@@ -91,9 +92,16 @@ nav > h1 {
     cursor: pointer;
 }
 
+#nav-buttons {
+    right: 140px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 74px;
+}
+
 #settings-btn {
     border: none;
-    right: 180px;
     width: 35px;
     height: 35px;
     background-image: url(./images/settings-light.png);
@@ -104,7 +112,6 @@ nav > h1 {
 
 #instructions-btn {
     border: 2px solid #000000;
-    right: 140px;
     width: 30px;
     height: 30px;
     font-weight: bold;
@@ -117,12 +124,20 @@ nav > h1 {
 
 .hidden {
     display: none !important;
-    visibility: hidden !important;
     opacity: 0;
-    transition: visibility 0.3s ease-in opacity 0.3 ease-in;
+    transition: opacity 0.3s ease-in;
 }
 
 /* Game styling */
+#game {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 600px;
+    width: 400px;
+}
+
 select#anime-selector,
 ::picker(select) {
     appearance: base-select;
@@ -135,9 +150,10 @@ select#anime-selector:open::picker-icon {
 }
 
 select#anime-selector {
-    width: 300px;
+    width: 100%;
+    height: 40px;
     box-sizing: border-box;
-    border: 2px solid rgb(9, 71, 53);
+    border: 1px solid rgb(0, 0, 0);
     margin-bottom: 10px;
     border-radius: 6px;
     padding: 5px 8px;
@@ -146,8 +162,8 @@ select#anime-selector {
     transition: rotate 0.4s ease-in-out;
 }
 
-option#anime-option {
-    width: 300px;
+.anime-option {
+    width: 400px;
     height: 40px;
     word-wrap: normal;
 }
@@ -158,11 +174,90 @@ option#anime-option {
     width: auto;
 }
 
-#anime {
+#user-input {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#user-guess {
+    padding: 4px 8px;
+    width: 240px;
+}
+
+body.dark-mode #randomize {
+    background-color: #494949;
+}
+
+#randomize {
+    color: inherit;
+    background-color: #90e0ef;
+    border: none;
+    position: relative;
     margin-top: 10px;
     border-radius: 6px;
     padding: 4px;
-    display: block;
+    width: 130px;
+    height: 46px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+body.dark-mode #randomize:hover {
+    cursor: pointer;
+}
+
+body.dark-mode #randomize-desc {
+    background-color: rgba(100, 100, 100);
+}
+
+#randomize-desc {
+    position: absolute;
+    color: inherit;
+    font-size: 14px;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    padding: 6px;
+    border-radius: 10px;
+    width: 240px;
+    background-color: rgba(200, 200, 200);
+    font-weight: 100 !important;
+}
+
+body.dark-mode #randomize-desc::after {
+    border-color: transparent transparent rgba(100, 100, 100) transparent;
+}
+
+#randomize-desc::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent rgba(200, 200, 200) transparent;
+}
+
+#alert {
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.3;
+}
+
+.correct {
+    background-color: rgb(9, 71, 53);
+}
+
+.wrong {
+    background-color: rgb(71, 9, 0);
 }
 
 /* Overlay styling */
@@ -174,7 +269,7 @@ option#anime-option {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(32, 32, 32, 0.8);
     transition: visibility 0.3s ease-in opacity 0.3 ease-in;
 }
 
@@ -192,12 +287,12 @@ option#anime-option {
 }
 
 body.dark-mode .div-menu-container {
-    background-color: #303030;
+    background-color: #0d1b2a;
 }
 
 .div-menu-container {
     position: relative;
-    background-color: #c0c0c0;
+    background-color: #8ecae6;
 }
 
 /* General form styling */
@@ -367,7 +462,7 @@ body.dark-mode .div-menu-container {
     flex-wrap: wrap;
     align-content: space-between;
     height: 300px;
-    top: 100px;
+    top: 120px;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;

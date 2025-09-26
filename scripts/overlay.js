@@ -40,7 +40,7 @@ export function createOverlay(type) {
         const form = formContainer.appendChild(Object.assign(document.createElement("form"), { id: `${type}-form` }));
 
         // Create h1 as a form type indicator
-        form.appendChild(Object.assign(document.createElement("h1"), { textContent: `${overlayDict[type].buttonText} Form` }))
+        form.appendChild(Object.assign(document.createElement("h1"), { textContent: `${overlayDict[type].buttonText}` }))
 
         // Create form mode indicator
         const formMode = form.appendChild(Object.assign(document.createElement("div"), { id: "form-mode" }));
@@ -150,8 +150,10 @@ export function createOverlay(type) {
         // Create h1 to inform user that these are the instructions
         divContainer.appendChild(Object.assign(document.createElement("h1"), {textContent: "How To Play"}));
 
-        // Create p to show user how to play
-        
+        // Create p to explain how to play
+        divContainer.appendChild(Object.assign(document.createElement("p"), {id: "instructions"}));
+
+        overlayDiv.appendChild(frag);
     }
 }
 

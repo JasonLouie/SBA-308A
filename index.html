@@ -17,8 +17,10 @@
     <header>
         <nav>
             <h1>Anime Guesser</h1>
-            <button type="button" id="settings-btn" class="nav-button"></button>
-            <button type="button" id="instructions-btn" class="nav-button">?</button>
+            <div id="nav-buttons">
+                <button type="button" id="settings-btn" class="nav-button"></button>
+                <button type="button" id="instructions-btn" class="nav-button">?</button>
+            </div>
             <div id="login-signup-nav">
                 <p><a href="#" id="login-nav" class="nav-anchor">Login</a> or <a href="#" id="signup-nav" class="nav-anchor">Sign Up</a></p>
             </div>
@@ -28,8 +30,13 @@
         <div id="game">
             <select name="anime-selector" id="anime-selector"></select>
             <img src="" alt="Anime Photo" id="anime-pic">
-            <input type="text" name="anime-guess" id="user-guess" placeholder="Enter character name">
-            <button type="button" id="anime">Click me to generate an anime character!</button>
+            <form id="user-input">
+                <input type="text" name="anime-guess" id="user-guess" placeholder="Enter character name">
+                <button type="submit">Guess</button>
+            </form>
+            <button type="button" id="randomize">Randomize
+                <span id="randomize-desc" class="hidden">Click me to generate a random anime character!</span>
+            </button>
         </div>
         <div id="overlay" class="hidden"></div>
     </main>

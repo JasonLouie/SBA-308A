@@ -9,23 +9,17 @@ export const userSettings = { ...defaultSettings };
 async function initLoad() {
     setUpNavBarEventListeners();
 
-    function setUpNavBarEventListeners() {
-        const navAnchors = document.getElementsByClassName("nav-anchor");
-        const navBtns = document.getElementsByClassName("nav-button");
-        const animeButton = document.getElementById("anime");
+    startGame();
 
-        // Add event listener to the button
-        animeButton.addEventListener("click", startGame);
+    function setUpNavBarEventListeners() {
+        const navButtonDiv = document.getElementById("nav-buttons");
+        const navAnchorDiv = document.getElementById("login-signup-nav");
 
         // Add event listeners for settings & instructions
-        for (const navBtn of navBtns) {
-            navBtn.addEventListener("click", handleOpenNavElement);
-        }
+        navButtonDiv.addEventListener("click", handleOpenNavElement);
 
         // Add event listeners for login & signup
-        for (const navAnchor of navAnchors) {
-            navAnchor.addEventListener("click", handleLoginSignUp);
-        }
+        navAnchorDiv.addEventListener("click", handleLoginSignUp);
     }
 }
 
