@@ -1,5 +1,3 @@
-export { defaultSettings };
-
 const loginInputs = [
     { type: "text", name: "username", placeholder: "Username", className: "field", autocomplete: "username" },
     { type: "password", name: "password", placeholder: "Password", className: "field", autocomplete: "current-password" },
@@ -23,7 +21,12 @@ const settings = [
     { id: "colors", classList: "settings", textContent: "Show Photo Colors", isOn: true, description: "Toggle between showing black and white or regular photo colors" }
 ];
 
-const defaultSettings = {"dark-mode": true, "hints": true, "blur": false, "colors": true};
+const instructions = [
+    { id: "" },
+    { id: "" }
+]
+
+export const defaultSettings = {"dark-mode": true, "hints": true, "blur": false, "colors": true};
 
 const overlayDict = {
     login: { inputs: loginInputs, innerHTML: loginInnerHTML, buttonText: loginButtonText },

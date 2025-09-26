@@ -76,6 +76,7 @@ nav > h1 {
     top: 50%;
     transform: translateY(-50%);
     margin: 0;
+    user-select: none;
 }
 
 .nav-button {
@@ -442,4 +443,10 @@ div.on {
 
 button.on {
     transform: translateX(30px);
+}
+
+/* Instructions styling */
+#instructions-container {
+    height: 500px;
+    width: 450px;
 }
