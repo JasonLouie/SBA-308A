@@ -29,9 +29,15 @@
     <main id="container">
         <div id="game">
             <select name="anime-selector" id="anime-selector"></select>
-            <img src="" alt="Anime Photo" id="anime-pic">
+            <div class="img-container">
+                <img src="" alt="Anime Photo" id="anime-pic">
+            </div>
             <form id="user-input">
-                <input type="text" name="anime-guess" id="user-guess" placeholder="Enter character name">
+                <div id="stats">
+                    <p>Guesses: 1/6</p>
+                    <p>Guessed: 0/{total}</p>
+                </div>
+                <input type="text" name="user-guess" id="user-guess" placeholder="Enter character name">
                 <button type="submit">Guess</button>
             </form>
             <button type="button" id="randomize">Randomize

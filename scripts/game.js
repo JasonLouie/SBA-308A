@@ -1,19 +1,21 @@
 // Update website based on game logic
 import { getAnimeList, getAnimeCharacters } from "./apicalls.js";
-
+import { updateBlur } from "./overlay.js";
+export let guess = 1;
+const totalGuesses = 6;
 const animePic = document.getElementById("anime-pic");
 const animeSelector = document.getElementById("anime-selector");
 const randomizeButton = document.getElementById("randomize");
+const statsDiv = document.getElementById("stats");
 
 const form = document.getElementById("user-input");
 
 let answer = {};
+let imagesGuessed = 0; // images guessed for the current anime might use an obj later...
 
 // Will only happen once
 export async function startGame() {
     const animeList = await getAnimeList();
-    // console.log("-=-=-= Anime List =-=-=-");
-    // console.log(animeList.data);
 
     // Populate the anime selector with options
     initSelector();
@@ -38,9 +40,10 @@ export async function startGame() {
         }
     }
 
+
     function checkAnswer(e) {
         e.preventDefault(); // Do not allow page refresh
-        const userAnswer = form.elements["anime-guess"];
+        const userAnswer = form.elements["user-guess"];
         if (userAnswer.value === "") {
             return;
         }
@@ -50,7 +53,9 @@ export async function startGame() {
         if (answers.has(userAnswer.value.toLowerCase())){
             console.log("Correct answer!");
         } else {
-            console.log(answer);
+            console.log("Wrong answer");
+            guess++;
+            updateBlur(); // Update blur!
         }
     }
 
@@ -58,16 +63,22 @@ export async function startGame() {
     function possibleAnswers() {
         const correctName = answer.character.name;
         const acceptableAnswers = new Set([correctName.toLowerCase()]);
-
-        // If name has a first and last
+        // Another edge case: any time there is a comma in long names, the first name is the last part, so include this as an answer only or the full name?
         if (correctName.includes(" ")) {
-            const res = correctName.replace(",", "").split(" ");
+            const res = correctName.replace(",", "").split(" "); // Handle first last names
+            if (res.length === 3){ // Edge case for Vash the Stampede
+                if (res[1] === "the") { 
+                    acceptableAnswers.add(res[0]); // Only add first name...
+                    return acceptableAnswers;
+                }
+            }
             res.forEach(answer => acceptableAnswers.add(answer.toLowerCase()));
         }
         return acceptableAnswers;
     }
 
     async function randomize(animeId=animeList.data[chooseRandomAnime()].mal_id) {
+        guess = 1; // Reset guess count to 1 upon randomize
         animeSelector.value = animeId;
 
         const characters = await getAnimeCharacters(animeId);
@@ -88,6 +99,11 @@ export async function startGame() {
         }
     }
 
+    function updateStats() {
+        statsDiv.children[0].textContent = `Guesses: ${guess}/${totalGuesses}`;
+        statsDiv.chldren[1].textContent = `Guessed: `
+    }
+
     // Used once to initialize the selector
     function initSelector() {
         animeList.data.forEach(anime => {
@@ -95,7 +111,7 @@ export async function startGame() {
         });
     }
 
-    // 
+    // Chooses a random anime
     function chooseRandomAnime() {
         const index = Math.floor(Math.random() * animeList.data.length);
         return index;
@@ -107,3 +123,11 @@ export async function startGame() {
 // Get photos related to character id and show more hints using some data from the API
 
 // Select the anime in selector.
+
+
+// TO DO In order:
+// Data persistence: store the images of those main characters in an object
+// Progress persistence: save which image was guessed correctly (when going back to prev category, start from that image)
+// Data cache kinda - once that random anime is chosen and the main characters are filtered, add to object (maybe mal_id: mainCharsArr)
+// Only do api calls if this obj doesn't exist...
+// Refactor game to show main characters in order.

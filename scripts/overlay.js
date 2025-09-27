@@ -1,7 +1,9 @@
 // Make a recursive function for creating elements given an array of objects
 import overlayDict from "../constants/constants.js";
 import { userSettings } from "./index.js";
+import { guess } from "./game.js";
 const overlayDiv = document.getElementById("overlay");
+const imgContainer = document.getElementsByClassName("img-container")[0];
 
 // Handle opening login or signup form
 export function handleLoginSignUp(e) {
@@ -29,7 +31,7 @@ export function createOverlay(type) {
     } else if (type === "settings") {
         createSettings();
     } else if (type === "instructions") {
-
+        createInstructions();
     }
 
     // Creates the login or sign up form
@@ -56,7 +58,7 @@ export function createOverlay(type) {
         createInputs(overlayDict[type].inputs, form);
 
         // Create the submit button and recommendation
-        form.appendChild(Object.assign(document.createElement("button"), { type: "submit", id: "form-submit", textContent: `${overlayDict[type].buttonText}` }));
+        form.appendChild(Object.assign(document.createElement("button"), { type: "submit", id: "form-submit", textContent: `${overlayDict[type].buttonText}`, classList: `${type}-btn` }));
         form.appendChild(Object.assign(document.createElement("p"), { id: "text-recommend", innerHTML: `${overlayDict[type].innerHTML}` }));
         overlayDiv.appendChild(frag);
 
@@ -113,19 +115,20 @@ export function createOverlay(type) {
                     e.target.parentElement.classList.toggle("on");
                     const setting = e.target.parentElement.parentElement.id;
                     userSettings[setting] = !userSettings[setting];
-
+                    // Figure out how to handle multiple filters...
                     switch (setting) {
                         case "dark-mode":
                             document.body.classList.toggle("dark-mode");
                             break;
                         case "hints":
-
+                            updateBlur();
                             break;
                         case "blur":
-
+                            // Only add blur, if blur is true
+                            updateBlur();
                             break;
                         case "colors":
-
+                            imgContainer.classList.toggle("img-no-colors");
                             break;
                         default:
                             break;
@@ -145,16 +148,37 @@ export function createOverlay(type) {
     // Creates the instructions overlay
     function createInstructions() {
         const frag = new DocumentFragment();
-        const divContainer = frag.appendChild(Object.assign(document.createElement("div"), {id: "instructions-container", classList: "div-menu-container"}));
+        const divContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "instructions-container", classList: "div-menu-container" }));
 
         // Create h1 to inform user that these are the instructions
-        divContainer.appendChild(Object.assign(document.createElement("h1"), {textContent: "How To Play"}));
+        divContainer.appendChild(Object.assign(document.createElement("h1"), { textContent: "How To Play" }));
 
         // Create p to explain how to play
-        divContainer.appendChild(Object.assign(document.createElement("p"), {id: "instructions"}));
+        divContainer.appendChild(Object.assign(document.createElement("p"), { id: "instructions" }));
 
         overlayDiv.appendChild(frag);
     }
+}
+
+export function updateBlur() {
+    console.log(guess);
+    const blurDict = { 1: "blur-xl", 2: "blur-lg", 3: "blur-md", 4: "blur-sm", 5: "blur-xs" };
+    if (userSettings.blur) {
+        if (!userSettings.hints) { // Only use max blur if hints are off
+            imgContainer.classList.add(blurDict[1]);
+        } else {
+            // Remove older blurs
+            for (let i = 1; i < guess; i++) {
+                imgContainer.classList.remove(blurDict[i]);
+            }
+            if (blurDict[guess]){
+                imgContainer.classList.add(blurDict[guess]);
+            }
+        }
+    } else { // If blur is off, just reset class list
+        imgContainer.classList = "img-container";
+    }
+    
 }
 
 function clearOverlay() {
