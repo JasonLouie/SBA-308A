@@ -1,26 +1,15 @@
 // Main file
-import { defaultSettings } from "../constants/constants.js";
-import { handleLoginSignUp, handleOpenNavElement } from "./overlay.js";
-import { startGame } from "./game.js";
+import Game from "../classes/Game.js";
+import User from "../classes/User.js"
 
-// Create a copy of the default settings for the user
-export const userSettings = { ...defaultSettings };
+const user = new User("Guest", "no-email@fake.com", "none");
+export const userSettings = user.settings;
+export const game = new Game(user);
+export const guess = game.guess;
+export const currentCharIndex = game.currentCharIndex;
 
 async function initLoad() {
-    setUpNavBarEventListeners();
-
-    startGame();
-
-    function setUpNavBarEventListeners() {
-        const navButtonDiv = document.getElementById("nav-buttons");
-        const navAnchorDiv = document.getElementById("login-signup-nav");
-
-        // Add event listeners for settings & instructions
-        navButtonDiv.addEventListener("click", handleOpenNavElement);
-
-        // Add event listeners for login & signup
-        navAnchorDiv.addEventListener("click", handleLoginSignUp);
-    }
+    game.startGame();
 }
 
 initLoad();

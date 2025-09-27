@@ -6,12 +6,7 @@
     <title>Guess the Anime Character!</title>
     <link rel="stylesheet" href="./styles.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="module" src="./constants/constants.js"></script>
-    <script type="module" src="./scripts/apicalls.js"></script>
     <script type="module" src="./scripts/index.js"></script>
-    <script type="module" src="./scripts/game.js"></script>
-    <script type="module" src="./scripts/login.js"></script>
-    <script type="module" src="./scripts/signup.js"></script>
 </head>
 <body class="dark-mode">
     <header>
@@ -29,10 +24,14 @@
     <main id="container">
         <div id="game">
             <select name="anime-selector" id="anime-selector"></select>
-            <div class="img-container">
-                <img src="" alt="Anime Photo" id="anime-pic">
+            <div id="anime-slideshow-container">
+                <a class="prev">&#10094;</a>
+                <a class="next">&#10095;</a>
             </div>
-            <form id="user-input">
+            <div id="slideshow-navigation">
+
+            </div>
+            <form id="form-user-input">
                 <div id="stats">
                     <p>Guesses: 1/6</p>
                     <p>Guessed: 0/{total}</p>

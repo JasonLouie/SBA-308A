@@ -4,7 +4,7 @@ body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body * {
+* {
     box-sizing: border-box;
 }
 
@@ -37,8 +37,6 @@ nav {
     margin-bottom: 20px;
 }
 
-
-
 a {
     color: inherit;
     font-family: inherit;
@@ -46,12 +44,12 @@ a {
     transition: filter 0.2s ease-in;
 }
 
-a:hover {
-    text-decoration: underline;
-}
-
 body.dark-mode a:hover {
     filter: brightness(80%);
+}
+
+body:not(.dark-mode) :is(#text-recommend a:hover, nav a:hover) {
+    text-decoration: underline;
 }
 
 #container {
@@ -142,7 +140,6 @@ nav > h1 {
 select#anime-selector {
     width: 100%;
     height: 40px;
-    box-sizing: border-box;
     border: 1px solid rgb(0, 0, 0);
     border-radius: 6px;
     padding: 5px 8px;
@@ -165,13 +162,80 @@ select#anime-selector {
     background-color: #caf0f8;
 }
 
-#anime-pic {
-    display: block;
+/* Img slide show styling */
+#anime-slideshow-container {
+    position: relative;
+    height: 400px;
+    width: 300px;
+    border-radius: 14px;
+    border: 1px solid #2a4a8f;
+}
+
+.photo-counter {
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    margin: 0;
+}
+
+.next, .prev {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    width: fit-content;
+    font-weight: 400;
+    user-select: none;
+}
+
+.next {
+    right: 0;
+}
+
+a.prev:hover, a.next:hover {
+    filter: brightness(120%);
+}
+
+#slideshow-navigation {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 300px;
+}
+
+.dot-selected {
+    background-color: #2a4a8f !important;
+}
+
+.dot {
+    margin: 2px;
+    cursor: pointer;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: #00b4d8;
+    transition: filter 0.2s ease-in;
+}
+
+.dot:hover {
+    filter: brightness(80%);
+}
+
+img.char-photo {
+    line-height: 400px;
+    text-align: center;
     height: 400px;
     width: auto;
 }
 
 .img-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
     --blur-amount: 0;
     --grayscale-amount: 0;
     filter: blur(var(--blur-amount)) grayscale(var(--grayscale-amount));
@@ -202,8 +266,18 @@ select#anime-selector {
     --grayscale-amount: 100%;
 }
 
+.fade {
+    animation-name: fade;
+    animation-duration: 1s;
+}
+
+@keyframes fade {
+    from {opacity: 0.4;}
+    to {opacity: 1;}
+}
+
 /* User input form styling */
-#user-input {
+#form-user-input {
     width: 100%;
     height: 104px;
     position: relative;
@@ -219,7 +293,7 @@ select#anime-selector {
     top: 0;
 }
 
-#user-input > button {
+#form-user-input > button {
     position: absolute;
     bottom: 0;
     right: 50px;
@@ -432,7 +506,6 @@ body.dark-mode .div-menu-container {
 }
 
 #form-submit {
-    box-sizing: border-box;
     font-size: 15px;
     font-weight: 600;
     color: inherit;

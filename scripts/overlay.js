@@ -1,9 +1,9 @@
 // Make a recursive function for creating elements given an array of objects
 import overlayDict from "../constants/constants.js";
-import { userSettings } from "./index.js";
-import { guess } from "./game.js";
+import { userSettings, guess, currentCharIndex } from "./index.js";
+import {  } from "./index.js";
+
 const overlayDiv = document.getElementById("overlay");
-const imgContainer = document.getElementsByClassName("img-container")[0];
 
 // Handle opening login or signup form
 export function handleLoginSignUp(e) {
@@ -160,23 +160,25 @@ export function createOverlay(type) {
     }
 }
 
+// Need to update this method to access the children elements of anime slideshow container
 export function updateBlur() {
     console.log(guess);
     const blurDict = { 1: "blur-xl", 2: "blur-lg", 3: "blur-md", 4: "blur-sm", 5: "blur-xs" };
+    const photo = animeSlideshowContainer.children.slice(0,-2)[currentCharIndex];
     if (userSettings.blur) {
         if (!userSettings.hints) { // Only use max blur if hints are off
-            imgContainer.classList.add(blurDict[1]);
+            photo.classList.add(blurDict[1]);
         } else {
             // Remove older blurs
             for (let i = 1; i < guess; i++) {
-                imgContainer.classList.remove(blurDict[i]);
+                photo.classList.remove(blurDict[i]);
             }
             if (blurDict[guess]){
-                imgContainer.classList.add(blurDict[guess]);
+                photo.classList.add(blurDict[guess]);
             }
         }
     } else { // If blur is off, just reset class list
-        imgContainer.classList = "img-container";
+        photo.classList = "img-container fade";
     }
     
 }
