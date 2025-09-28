@@ -167,19 +167,17 @@ export function createOverlay(type) {
 // Need to update this method to access the children elements of anime slideshow container
 export function updateBlur() {
     const guessesObj = userGuesses[animeSelector.value];
-    console.log(guessesObj);
     const photos = slideshow.children;
     const blurDict = { 0: "blur-xl", 1: "blur-lg", 2: "blur-md", 3: "blur-sm", 4: "blur-xs" };
     
     for (let i = 0; i < photos.length; i++) {
         if (userSettings.blur && guessesObj[i].userAnswer === null) {
             if (!userSettings.hints) { // Only use max blur if hints are off
-                removeOldBlurs();
+                removeBlurs();
                 photos[i].classList.add(blurDict[1]);
             } else {
                 // Remove older blurs
-                console.log(i, "guesses:", guessesObj[i].guessCount);
-                removeOldBlurs(guessesObj[i].guessCount);
+                removeBlurs(guessesObj[i].guessCount);
                 // Apply blur if it exists
                 if (blurDict[guessesObj[i].guessCount]){
                     photos[i].classList.add(blurDict[guessesObj[i].guessCount]);
@@ -190,7 +188,7 @@ export function updateBlur() {
         }
     }
     
-    function removeOldBlurs(intensity=5) {
+    function removeBlurs(intensity=5) {
         for (let i = 0; i < intensity; i++) {
             slideshow.classList.remove(blurDict[i]);
         }
