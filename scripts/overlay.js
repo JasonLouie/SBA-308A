@@ -1,11 +1,13 @@
 // Make a recursive function for creating elements given an array of objects
 import overlayDict from "../constants/constants.js";
-import { userSettings, userGuesses } from "./index.js";
+import { user } from "../classes/User.js";
 import { currentPicIndex as index } from "./slideshow.js";
 
 const slideshow = document.getElementById("slideshow");
 const animeSelector = document.getElementById("anime-selector"); // Used to get the animeId
 const overlayDiv = document.getElementById("overlay");
+const userSettings = user.settings;
+const userGuesses = user.guesses;
 
 // Handle opening login or signup form
 export function handleOpenLoginSignUp(e) {
@@ -115,7 +117,7 @@ export function createOverlay(type) {
                     e.target.classList.toggle("on");
                     e.target.parentElement.classList.toggle("on");
                     const setting = e.target.parentElement.parentElement.id;
-                    userSettings[setting] = !userSettings[setting];
+                    user.toggleSetting(setting);
                     // Figure out how to handle multiple filters...
                     switch (setting) {
                         case "dark-mode":
