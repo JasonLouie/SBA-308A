@@ -1,12 +1,14 @@
 // Make a recursive function for creating elements given an array of objects
 import overlayDict from "../constants/constants.js";
-import { userSettings, guess, currentCharIndex } from "./index.js";
-import {  } from "./index.js";
+import { userSettings, userGuesses } from "./index.js";
+import { currentPicIndex as index } from "./slideshow.js";
 
+const slideshow = document.getElementById("slideshow");
+const animeSelector = document.getElementById("anime-selector"); // Used to get the animeId
 const overlayDiv = document.getElementById("overlay");
 
 // Handle opening login or signup form
-export function handleLoginSignUp(e) {
+export function handleOpenLoginSignUp(e) {
     if (e.target.localName === "a") {
         e.preventDefault();
         createOverlay(e.target.textContent.replace(" ", "").toLowerCase());
@@ -23,7 +25,6 @@ export function handleOpenNavElement(e) {
 
 // Displays the overlay and creates the particular type
 export function createOverlay(type) {
-    console.log(`Created overlay ${type}`);
     overlayDiv.classList.remove("hidden");
 
     if (type === "login" || type === "signup") { // Login/signup form
@@ -63,7 +64,7 @@ export function createOverlay(type) {
         overlayDiv.appendChild(frag);
 
         // Add event listener to the anchor tag of the form (to switch modes)
-        overlayDiv.querySelector("a").addEventListener("click", handleLoginSignUp);
+        overlayDiv.querySelector("a").addEventListener("click", handleOpenLoginSignUp);
 
         function createInputs(inputArr, parentElement) {
             for (const input of inputArr) {
@@ -128,7 +129,10 @@ export function createOverlay(type) {
                             updateBlur();
                             break;
                         case "colors":
-                            imgContainer.classList.toggle("img-no-colors");
+                            const photos = slideshow.children;
+                            for (const photo of photos) {
+                                photo.classList.toggle("img-no-colors");
+                            }                            
                             break;
                         default:
                             break;
@@ -162,25 +166,35 @@ export function createOverlay(type) {
 
 // Need to update this method to access the children elements of anime slideshow container
 export function updateBlur() {
-    console.log(guess);
-    const blurDict = { 1: "blur-xl", 2: "blur-lg", 3: "blur-md", 4: "blur-sm", 5: "blur-xs" };
-    const photo = animeSlideshowContainer.children.slice(0,-2)[currentCharIndex];
-    if (userSettings.blur) {
-        if (!userSettings.hints) { // Only use max blur if hints are off
-            photo.classList.add(blurDict[1]);
-        } else {
-            // Remove older blurs
-            for (let i = 1; i < guess; i++) {
-                photo.classList.remove(blurDict[i]);
+    const guessesObj = userGuesses[animeSelector.value];
+    console.log(guessesObj);
+    const photos = slideshow.children;
+    const blurDict = { 0: "blur-xl", 1: "blur-lg", 2: "blur-md", 3: "blur-sm", 4: "blur-xs" };
+    
+    for (let i = 0; i < photos.length; i++) {
+        if (userSettings.blur && guessesObj[i].userAnswer === null) {
+            if (!userSettings.hints) { // Only use max blur if hints are off
+                removeOldBlurs();
+                photos[i].classList.add(blurDict[1]);
+            } else {
+                // Remove older blurs
+                console.log(i, "guesses:", guessesObj[i].guessCount);
+                removeOldBlurs(guessesObj[i].guessCount);
+                // Apply blur if it exists
+                if (blurDict[guessesObj[i].guessCount]){
+                    photos[i].classList.add(blurDict[guessesObj[i].guessCount]);
+                }
             }
-            if (blurDict[guess]){
-                photo.classList.add(blurDict[guess]);
-            }
+        } else { // If blur is off, just reset class list
+            photos[i].classList = "img-container fade";
         }
-    } else { // If blur is off, just reset class list
-        photo.classList = "img-container fade";
     }
     
+    function removeOldBlurs(intensity=5) {
+        for (let i = 0; i < intensity; i++) {
+            slideshow.classList.remove(blurDict[i]);
+        }
+    }
 }
 
 function clearOverlay() {
