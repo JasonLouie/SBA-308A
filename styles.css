@@ -30,6 +30,15 @@ body.dark-mode nav {
     border-top: 1px solid #415a77;
     border-bottom: 1px solid #415a77;
 }
+
+input:focus {
+    outline: 1px solid #00b4d8;
+}
+
+button {
+    user-select: none;
+}
+
 nav {
     background-color: #90e0ef;
     border-top: 1px solid #00b4d8;
@@ -132,8 +141,6 @@ nav > h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-content: space-between;
-    height: 640px;
     width: 400px;
 }
 
@@ -163,83 +170,53 @@ select#anime-selector {
 }
 
 /* Img slide show styling */
-#anime-slideshow-container {
+#slideshow-container {
+    margin-top: 14px;
     position: relative;
     height: 400px;
     width: 300px;
+    overflow: hidden;
+}
+
+.anime-slideshow-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
     border-radius: 14px;
     border: 1px solid #2a4a8f;
+    overflow: hidden;
 }
 
 .photo-counter {
+    color: white;
     position: absolute;
-    left: 6px;
-    bottom: 6px;
-    margin: 0;
-}
-
-.next, .prev {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 20px;
-    width: fit-content;
-    font-weight: 400;
-    user-select: none;
-}
-
-.next {
-    right: 0;
-}
-
-a.prev:hover, a.next:hover {
-    filter: brightness(120%);
-}
-
-#slideshow-navigation {
-    margin-top: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 6px;
     height: 30px;
-    width: 300px;
-}
-
-.dot-selected {
-    background-color: #2a4a8f !important;
-}
-
-.dot {
-    margin: 2px;
-    cursor: pointer;
-    display: inline-block;
-    height: 15px;
-    width: 15px;
-    border-radius: 50%;
-    background-color: #00b4d8;
-    transition: filter 0.2s ease-in;
-}
-
-.dot:hover {
-    filter: brightness(80%);
+    left: 6px;
+    top: 364px;
+    width: 30px;
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 img.char-photo {
     line-height: 400px;
     text-align: center;
-    height: 400px;
-    width: auto;
+    width: 300px;
+    height: auto;
 }
 
 .img-container {
-    position: relative;
     display: flex;
     justify-content: center;
     --blur-amount: 0;
     --grayscale-amount: 0;
     filter: blur(var(--blur-amount)) grayscale(var(--grayscale-amount));
     transition: filter 0.3s ease-in-out;
+    overflow: hidden;
 }
 
 .blur-xl {
@@ -276,27 +253,92 @@ img.char-photo {
     to {opacity: 1;}
 }
 
-/* User input form styling */
-#form-user-input {
-    width: 100%;
-    height: 104px;
-    position: relative;
+.next, .prev {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    height: 40px;
+    width: 24px;
+    font-weight: 400;
+    user-select: none;
+    background-color: rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease-in;
+    color: white;
+}
+
+.prev {
+    border-radius: 0 6px 6px 0;
+}
+
+.next {
+    right: 0;
+    border-radius: 6px 0 0 6px;
+}
+
+a.prev:hover, a.next:hover {
+    filter: none !important;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+#slideshow-navigation {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 300px;
+    bottom: 20px;
+}
+
+.dot-selected {
+    background-color: #2a4a8f !important;
+}
+
+.dot {
+    margin: 2px;
+    cursor: pointer;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: #00b4d8;
+    transition: filter 0.2s ease-in;
+}
+
+.dot:hover {
+    filter: brightness(80%);
 }
 
 #stats {
-    position: absolute;
     width: 300px;
+    height: 50px;
     display: flex;
     justify-content: space-between;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 0;
+    align-items: center;
 }
 
-#form-user-input > button {
-    position: absolute;
-    bottom: 0;
-    right: 50px;
+#stats > p {
+    margin: 0;
+}
+
+/* User input form styling */
+#input-container {
+    height: 44px;
+    width: 300px;
+}
+
+.form-user-input {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.form-user-input > button {
     border: 1px solid #2a4a8f;
     background-color: #00b4d8;
     height: 44px;
@@ -308,9 +350,6 @@ img.char-photo {
 }
 
 #user-guess {
-    position: absolute;
-    bottom: 0;
-    left: 50px;
     border: 1px solid #2a4a8f;
     border-radius: 10px 0 0 10px;
     padding: 4px 8px;
@@ -318,8 +357,54 @@ img.char-photo {
     height: 44px;
 }
 
-input:focus {
-    outline: 1px solid #00b4d8;
+.answer {
+    width: 300px;
+    height: inherit;
+}
+
+.answer p {
+    margin: 0;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#solved {
+    position: relative;
+}
+
+#solved > button {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+}
+
+#view-desc {
+    position: absolute;
+    color: inherit;
+    font-size: 14px;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    padding: 6px;
+    border-radius: 10px;
+    width: 210px;
+    background-color: rgba(200, 200, 200);
+    font-weight: 100 !important;
+}
+
+#view-desc::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent rgba(200, 200, 200) transparent;
 }
 
 body.dark-mode #randomize {
@@ -331,7 +416,7 @@ body.dark-mode #randomize {
     background-color: #90e0ef;
     border: none;
     position: relative;
-    margin-top: 10px;
+    margin-top: 20px;
     border-radius: 10px;
     padding: 4px;
     width: 130px;
@@ -344,7 +429,7 @@ body.dark-mode #randomize:hover {
     cursor: pointer;
 }
 
-body.dark-mode #randomize-desc {
+body.dark-mode :is(#randomize-desc, #view-desc) {
     background-color: rgba(100, 100, 100);
 }
 

@@ -24,21 +24,29 @@
     <main id="container">
         <div id="game">
             <select name="anime-selector" id="anime-selector"></select>
-            <div id="anime-slideshow-container">
-                <a class="prev">&#10094;</a>
-                <a class="next">&#10095;</a>
+            <div id="slideshow-container">
+                <div id="slideshow" class="anime-slideshow-container"></div>
+                <a id="slideshow-prev" class="prev">&#10094;</a>
+                <a id="slideshow-next" class="next">&#10095;</a>
             </div>
-            <div id="slideshow-navigation">
-
+            <div id="slideshow-navigation"></div>
+            <div id="stats">
+                <p></p>
+                <p></p>
             </div>
-            <form id="form-user-input">
-                <div id="stats">
-                    <p>Guesses: 1/6</p>
-                    <p>Guessed: 0/{total}</p>
+            <div id="input-container">
+                <form id="form-user-input" class="form-user-input">
+                    <input type="text" name="user-guess" id="user-guess" placeholder="Enter character name">
+                    <button type="submit">Guess</button>
+                </form>
+                <div id="solved" class="answer hidden">
+                    <p></p>
+                    <button type="button">View Info
+                        <span id="view-desc" class="hidden">Click me to view information on this character!</span>
+                    </button>
                 </div>
-                <input type="text" name="user-guess" id="user-guess" placeholder="Enter character name">
-                <button type="submit">Guess</button>
-            </form>
+            </div>
+            
             <button type="button" id="randomize">Randomize
                 <span id="randomize-desc" class="hidden">Click me to generate a random anime character!</span>
             </button>

@@ -211,3 +211,8 @@ function closeOverlay(e) {
         clearOverlay();
     }
 }
+
+
+// TO DO:
+// Fix styles from settings not reflecting in other animes.
+// Blur broke again!
