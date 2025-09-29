@@ -39,6 +39,10 @@ button {
     user-select: none;
 }
 
+button:disabled {
+    cursor: not-allowed;
+}
+
 nav {
     background-color: #90e0ef;
     border-top: 1px solid #00b4d8;
@@ -314,7 +318,7 @@ a.prev:hover, a.next:hover {
 }
 
 #stats {
-    width: 300px;
+    width: 350px;
     height: 50px;
     display: flex;
     justify-content: space-between;
@@ -327,12 +331,14 @@ a.prev:hover, a.next:hover {
 
 /* User input form styling */
 #input-container {
-    height: 44px;
-    width: 300px;
+    height: 64px;
+    width: 350px;
+    margin-bottom: 20px;
 }
 
 .form-user-input {
-    width: 100%;
+    width: inherit;
+    height: inherit;
     display: flex;
     justify-content: center;
 }
@@ -340,11 +346,11 @@ a.prev:hover, a.next:hover {
 .form-user-input > button {
     border: 1px solid #2a4a8f;
     background-color: #00b4d8;
-    height: 44px;
+    height: 50px;
     cursor: pointer;
     color: inherit;
     font-weight: 600;
-    width: 60px;
+    width: 20%;
     border-radius: 0 10px 10px 0;
 }
 
@@ -352,8 +358,8 @@ a.prev:hover, a.next:hover {
     border: 1px solid #2a4a8f;
     border-radius: 10px 0 0 10px;
     padding: 4px 8px;
-    width: 240px;
-    height: 44px;
+    width: 80%;
+    height: 50px;
 }
 
 .answer {
@@ -801,7 +807,12 @@ button.on {
     width: 90%;
 }
 
-#kanji, #div-about, #voice-actors-div {
+#kanji, #voice-actors-div {
+    left: 5%;
+    width: 340px;
+}
+
+#div-about {
     left: 50%;
     transform: translateX(-50%);
 }
@@ -811,21 +822,22 @@ pre {
     font-family: inherit;
 }
 
-#kanji {
+#character-info {
     top: 80px;
-    font-size: 20px;
-    font-family: inherit;
+    left: 5%;
+    width: 350px;
+}
+
+#character-info > p {
+    margin: 0 0 4px 0;
 }
 
 #anime-info-container > h1 {
     font-size: 30px;
 }
 
-#voice-actors-div {
-    top: 93px;
-}
-
 .voice-actors-ul, .info-heading {
+    margin: 0 0 4px 0;
     padding: 0;
     font-size: 20px;
     font-weight: bold;

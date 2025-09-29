@@ -1,8 +1,13 @@
 // Functionality for going through the slides
-import game from "../classes/Game.js";
+import { game } from "./index.js";
 import { animeSlideshowContainer, dotNavigation, next, prev } from "../constants/selectors.js";
-import { loadAllSettings } from "./settings.js";
 
+class Slideshow {
+    #currentPicIndex;
+    constructor() {
+
+    }
+}
 let currentPicIndex = 1;
 
 // Empties anime slideshow container
@@ -43,7 +48,6 @@ export function updateAnimeSlideshowContainer(animeInfo, index=1) {
     animeSlideshowContainer.prepend(slideshowFrag) // Prepend because the last two elements should always be the two anchor elements.
     dotNavigation.appendChild(dotFrag);
     showPic(currentPicIndex);
-    loadAllSettings();
 }
 
 function buttonNavigate(num) {

@@ -6,6 +6,7 @@ export const overlayDiv = document.getElementById("overlay");
 
 // Game-related elements
 export const form = document.getElementById("form-user-input"); // Access game form
+export const guessButton = document.getElementById("submit-guess");
 export const solvedDiv = document.getElementById("solved"); // Access solved div to show/hide depending on game state
 export const statsDiv = document.getElementById("stats"); // Access stats
 export const randomizeButton = document.getElementById("randomize"); // Access randomize button
