@@ -62,12 +62,9 @@ class Game {
         animeSelector.value = animeId; // Update selector to show which anime the character is from
 
         let mainCharacters = [];
-
         if (this.#animeInfo[animeId].mainChars != null) { // Don't make the api call if main character data for this anime was already retrieved
-            console.log("Accessing stored anime character info");
             mainCharacters = this.#animeInfo[animeId].mainChars;
         } else {
-            console.log("Storing anime character info");
             const characters = await getAnimeCharacters(animeId);
             mainCharacters = characters.data.filter(entry => entry.role === "Main");
             this.#animeInfo[animeId].mainChars = mainCharacters;
@@ -79,7 +76,6 @@ class Game {
 
         // Generate answers when this anime is used the first time
         if (this.#animeCharacterAnswers[animeId].length === 0) {
-            console.log("Generating answers...")
             this.#generateAnswers(animeId);
         }
 
@@ -88,7 +84,6 @@ class Game {
 
         // Update the anime slideshow container. 
         const random = chooseRandomIndex();
-        console.log(random);
         updateAnimeSlideshowContainer(this.#animeInfo[animeId], random);
 
         function chooseRandomIndex() {

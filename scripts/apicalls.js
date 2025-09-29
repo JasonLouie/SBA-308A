@@ -24,7 +24,7 @@ axios.interceptors.response.use(function onFullfilled(response) {
 });
 
 export async function getAnimeList() {
-    const response = await axios.get(`/anime?type=tv&min_score=8&order_by=popularity&sfw`);
+    const response = await axios.get(`/anime?type=tv&min_score=8&order_by=favorites&sfw&sort=desc`);
     return response.data;
 }
 
