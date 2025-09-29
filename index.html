@@ -41,15 +41,19 @@
                 </form>
                 <div id="solved" class="answer hidden">
                     <p></p>
-                    <button type="button">View Info
-                        <span id="view-desc" class="hidden">Click me to view information on this character!</span>
-                    </button>
                 </div>
             </div>
-            
-            <button type="button" id="randomize">Randomize
-                <span id="randomize-desc" class="hidden">Click me to generate a random anime character!</span>
-            </button>
+            <div class="game-buttons">
+                <button type="button" id="randomize" class="game-button">Randomize
+                    <span id="randomize-desc" class="hidden">Click me to generate a random anime character!</span>
+                </button>
+                <button type="button" id="give-up" class="game-button">Give Up
+                    <span id="give-up-desc" class="hidden">Click me to give up and reveal the answer</span>
+                </button>
+                <button type="button" id="get-info" class="game-button hidden">Get Info
+                    <span id="get-info-desc" class="hidden">Click me to view information on this character!</span>
+                </button>
+            </div>
         </div>
         <div id="overlay" class="hidden"></div>
     </main>

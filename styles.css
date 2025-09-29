@@ -183,7 +183,6 @@ select#anime-selector {
     height: 100%;
     width: 100%;
     border-radius: 14px;
-    border: 1px solid #2a4a8f;
     overflow: hidden;
 }
 
@@ -197,7 +196,7 @@ select#anime-selector {
     height: 30px;
     left: 6px;
     top: 364px;
-    width: 30px;
+    width: 50px;
     margin: 0;
     background-color: rgba(0, 0, 0, 0.7);
 }
@@ -264,7 +263,7 @@ img.char-photo {
     font-size: 20px;
     height: 40px;
     width: 24px;
-    font-weight: 400;
+    font-weight: normal;
     user-select: none;
     background-color: rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease-in;
@@ -373,13 +372,6 @@ a.prev:hover, a.next:hover {
     position: relative;
 }
 
-#solved > button {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-}
-
 #view-desc {
     position: absolute;
     color: inherit;
@@ -392,7 +384,7 @@ a.prev:hover, a.next:hover {
     border-radius: 10px;
     width: 210px;
     background-color: rgba(200, 200, 200);
-    font-weight: 100 !important;
+    font-weight: normal !important;
 }
 
 #view-desc::after {
@@ -412,28 +404,42 @@ body.dark-mode #randomize {
 }
 
 #randomize {
-    color: inherit;
     background-color: #90e0ef;
+}
+
+body.dark-mode #give-up {
+    background-color: #7e3402;
+}
+
+#give-up {
+    background-color: #f0aa69;
+}
+
+body.dark-mode #get-info {
+    background-color: #1b4332;
+}
+
+#get-info {
+    background-color: #95d5b2;
+}
+
+.game-button {
+    color: inherit;
     border: none;
     position: relative;
     margin-top: 20px;
     border-radius: 10px;
-    padding: 4px;
-    width: 130px;
-    height: 46px;
+    padding: 14px;
     font-size: 20px;
     font-weight: bold;
-}
-
-body.dark-mode #randomize:hover {
     cursor: pointer;
 }
 
-body.dark-mode :is(#randomize-desc, #view-desc) {
+body.dark-mode :is(#randomize-desc, #view-desc, #get-info-desc, #give-up-desc) {
     background-color: rgba(100, 100, 100);
 }
 
-#randomize-desc {
+#randomize-desc, #get-info-desc, #give-up-desc {
     position: absolute;
     color: inherit;
     font-size: 14px;
@@ -443,16 +449,23 @@ body.dark-mode :is(#randomize-desc, #view-desc) {
     z-index: 1;
     padding: 6px;
     border-radius: 10px;
-    width: 210px;
     background-color: rgba(200, 200, 200);
-    font-weight: 100 !important;
+    font-weight: 400;
 }
 
-body.dark-mode #randomize-desc::after {
+#randomize-desc {
+    width: 210px;
+}
+
+#get-info-desc, #give-up-desc {
+    width: 190px;
+}
+
+body.dark-mode :is(#randomize-desc, #get-info-desc, #give-up-desc)::after {
     border-color: transparent transparent rgba(100, 100, 100) transparent;
 }
 
-#randomize-desc::after {
+:is(#randomize-desc, #get-info-desc, #give-up-desc)::after {
     content: " ";
     position: absolute;
     bottom: 100%;
@@ -769,4 +782,82 @@ button.on {
 #instructions-container {
     height: 500px;
     width: 450px;
+}
+
+/* Anime Info styling */
+#anime-info-container {
+    position: relative;
+    height: 700px;
+    width: 600px;
+    border-radius: 20px;
+}
+
+#anime-info-container > h1 {
+    width: 100%;
+}
+
+#anime-info-container > * {
+    position: absolute;
+    width: 90%;
+}
+
+#kanji, #div-about, #voice-actors-div {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+pre {
+    margin: 0;
+    font-family: inherit;
+}
+
+#kanji {
+    top: 80px;
+    font-size: 20px;
+    font-family: inherit;
+}
+
+#anime-info-container > h1 {
+    font-size: 30px;
+}
+
+#voice-actors-div {
+    top: 93px;
+}
+
+.voice-actors-ul, .info-heading {
+    padding: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.voice-actor {
+    margin-left: 20px;
+    font-size: 15px;
+    font-weight: normal;
+}
+
+#info-photo-container {
+    display: flex;
+    justify-content: flex-end;
+    right: 5%;
+    top: 80px;
+    height: 290px;
+    width: 200px;
+}
+
+#info-photo-container > img {
+    width: auto;
+    height: inherit;
+}
+
+#div-about {
+    bottom: 20px;
+    overflow-y: auto;
+    height: 300px;
+}
+
+#about {
+    white-space: pre-wrap;
+    padding-right: 16px;
 }

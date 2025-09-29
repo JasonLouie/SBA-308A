@@ -59,6 +59,21 @@ export default class User {
         }
     }
 
+    // Only allow giving up if user hasn't solved the answer and if they haven't yet
+    giveUp(animeId, index) {
+        if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
+            if (this.#characterGuesses[animeId][index].userAnswer === null && this.#characterGuesses[animeId][index].gaveUp === false) {
+                this.#characterGuesses[animeId][index].gaveUp = true;
+            }
+        }
+    }
+
+    gaveUp(animeId, index) {
+        if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
+            return this.#characterGuesses[animeId][index].gaveUp;
+        }
+    }
+
     // Only increment the guess when the user hasn't found the answer yet
     incrementGuess(animeId, index) {
         if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
@@ -88,7 +103,7 @@ export default class User {
 
     // Toggle the specific user setting
     toggleSetting(setting) {
-        if (this.#settings[setting]) {
+        if (this.#settings[setting] != undefined) {
             this.#settings[setting] = !this.#settings[setting];
         }
     }
@@ -108,7 +123,7 @@ export default class User {
         // Update userGuesses by initializing the object representing the user's guess for the character
         if (this.#characterGuesses[animeId].length < length) {
             for (let i = 0; i < length; i++) {
-                this.#characterGuesses[animeId].push({ userAnswer: null, guessCount: 0 });
+                this.#characterGuesses[animeId].push({ userAnswer: null, guessCount: 0, gaveUp: false });
             }
         }
     }

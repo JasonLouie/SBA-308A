@@ -24,14 +24,15 @@ const settings = [
 const instructions = [
     { id: "" },
     { id: "" }
-]
+];
 
 export const defaultSettings = {"dark-mode": true, "hints": true, "blur": false, "colors": true};
 
 const overlayDict = {
     login: { inputs: loginInputs, innerHTML: loginInnerHTML, buttonText: loginButtonText },
     signup: { inputs: signUpInputs, innerHTML: signUpInnerHTML, buttonText: signUpButtonText },
-    settings: settings
+    settings: settings,
+    instructions: instructions
 };
 
 export default overlayDict;

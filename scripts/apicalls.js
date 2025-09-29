@@ -15,7 +15,7 @@ axios.interceptors.request.use(request => {
 
 // Response interceptor
 axios.interceptors.response.use(function onFullfilled(response) {
-    document.body.style.cursor = "default";
+    document.body.style.removeProperty("cursor");
 
     // Calculate how long the request took
     const timeElapsed = new Date().getTime() - response.config.metadata.start_time.getTime();
@@ -30,5 +30,10 @@ export async function getAnimeList() {
 
 export async function getAnimeCharacters(animeId) {
     const response = await axios.get(`/anime/${animeId}/characters`);
+    return response.data;
+}
+
+export async function getAnimeCharacterFullInfo(characterId) {
+    const response = await axios.get(`/characters/${characterId}/full`);
     return response.data;
 }

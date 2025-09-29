@@ -1,13 +1,9 @@
 // Functionality for going through the slides
-import { updateBlur } from "./overlay.js";
 import game from "../classes/Game.js";
-export const animeSlideshowContainer = document.getElementById("slideshow");
+import { animeSlideshowContainer, dotNavigation, next, prev } from "../constants/selectors.js";
+import { loadAllSettings } from "./settings.js";
 
-const dotNavigation = document.getElementById("slideshow-navigation");
-const next = document.getElementById("slideshow-next");
-const prev = document.getElementById("slideshow-prev");
-
-export let currentPicIndex = 1;
+let currentPicIndex = 1;
 
 // Empties anime slideshow container
 export function emptyAnimeSlideshowContainer() {
@@ -47,7 +43,7 @@ export function updateAnimeSlideshowContainer(animeInfo) {
     animeSlideshowContainer.prepend(slideshowFrag) // Prepend because the last two elements should always be the two anchor elements.
     dotNavigation.appendChild(dotFrag);
     showPic(1);
-    updateBlur();
+    loadAllSettings();
 }
 
 function buttonNavigate(num) {
@@ -79,8 +75,9 @@ function showPic(num) {
     
     photos[currentPicIndex-1].classList.remove("hidden");
     dots[currentPicIndex-1].classList.add("dot-selected");
-    game.updateStats();
+    game.updateStats(currentPicIndex-1);
 }
 
+// Add event listeners to the arrow buttons
 next.addEventListener("click", () => buttonNavigate(1));
 prev.addEventListener("click", () => buttonNavigate(-1));

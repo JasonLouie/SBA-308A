@@ -1,13 +1,8 @@
 // Make a recursive function for creating elements given an array of objects
 import overlayDict from "../constants/constants.js";
 import { user } from "../classes/User.js";
-import { currentPicIndex as index } from "./slideshow.js";
-
-const slideshow = document.getElementById("slideshow");
-const animeSelector = document.getElementById("anime-selector"); // Used to get the animeId
-const overlayDiv = document.getElementById("overlay");
-const userSettings = user.settings;
-const userGuesses = user.guesses;
+import { changeSetting } from "./settings.js";
+import { overlayDiv } from "../constants/selectors.js";
 
 // Handle opening login or signup form
 export function handleOpenLoginSignUp(e) {
@@ -25,8 +20,37 @@ export function handleOpenNavElement(e) {
     }
 }
 
+// Handle showing info on a character
+export function handleShowCharacterInfo(characterInfo) {
+    createCharacterInfo(characterInfo);
+}
+
+function createCharacterInfo(characterInfo) {
+    overlayDiv.classList.remove("hidden");
+    const frag = new DocumentFragment();
+    const container = frag.appendChild(Object.assign(document.createElement("div"), {id: "anime-info-container", classList: "div-menu-container"}));
+    container.appendChild(Object.assign(document.createElement("h1"), {textContent: `Information on ${characterInfo.name}`}));
+    container.appendChild(Object.assign(document.createElement("pre"), {id: "kanji", innerHTML: `<span class="info-heading">Kanji</span>: ${characterInfo.name_kanji}`}));
+    const voiceActorsDiv = container.appendChild(Object.assign(document.createElement("div"), {id: "voice-actors-div"}));
+    createVAInfo("Japanese");
+    createVAInfo("English");
+    const imgDiv = container.appendChild(Object.assign(document.createElement("div"), {id: "info-photo-container"}));
+    imgDiv.appendChild(Object.assign(document.createElement("img"), {src: characterInfo.images.jpg.image_url, alt: `Picture of ${characterInfo.name}`}));
+    const aboutDiv = container.appendChild(Object.assign(document.createElement("div"), {id: "div-about"}));
+    aboutDiv.appendChild(Object.assign(document.createElement("pre"), {id: "about", innerHTML: `<span class="info-heading">About</span>\n${characterInfo.about}`}));
+    overlayDiv.append(frag);
+
+    function createVAInfo(language) {
+        const voiceActors = characterInfo.voices.filter(actor => actor.language === language);
+        const ul = voiceActorsDiv.appendChild(Object.assign(document.createElement("ul"), {textContent: `${language} Voice Actor${(voiceActors.length === 1) ? "" : "s"}`, classList: "voice-actors-ul"}));
+        voiceActors.forEach(voiceActor => {
+            ul.appendChild(Object.assign(document.createElement("li"), {classList: "voice-actor", textContent: voiceActor.person.name}));
+        });
+    }
+}
+
 // Displays the overlay and creates the particular type
-export function createOverlay(type) {
+function createOverlay(type) {
     overlayDiv.classList.remove("hidden");
 
     if (type === "login" || type === "signup") { // Login/signup form
@@ -104,12 +128,13 @@ export function createOverlay(type) {
             settingName.appendChild(Object.assign(document.createElement("span"), { textContent: setting.description, classList: "setting-desc hidden" }));
 
             // Add event listener to show/hide tooltip
-            settingName.addEventListener("mouseover", showToolTip);
-            settingName.addEventListener("mouseout", showToolTip);
+            settingName.addEventListener("mouseover", showDescription);
+            settingName.addEventListener("mouseout", hideDescription);
 
             // Create the option
-            const optionDiv = settingDiv.appendChild(Object.assign(document.createElement("div"), { classList: `setting-option${(userSettings[setting.id]) ? " on" : ""}` }));
-            const optionBtn = optionDiv.appendChild(Object.assign(document.createElement("button"), { classList: `setting-option-btn${(userSettings[setting.id]) ? " on" : ""}` }));
+            const optionValue = (user.settings[setting.id]) ? " on" : "";
+            const optionDiv = settingDiv.appendChild(Object.assign(document.createElement("div"), { classList: `setting-option${optionValue}` }));
+            const optionBtn = optionDiv.appendChild(Object.assign(document.createElement("button"), { classList: `setting-option-btn${optionValue}` }));
 
             // Add event listener to toggle setting on/off
             optionBtn.addEventListener("click", (e) => {
@@ -117,38 +142,11 @@ export function createOverlay(type) {
                     e.target.classList.toggle("on");
                     e.target.parentElement.classList.toggle("on");
                     const setting = e.target.parentElement.parentElement.id;
-                    user.toggleSetting(setting);
-                    // Figure out how to handle multiple filters...
-                    switch (setting) {
-                        case "dark-mode":
-                            document.body.classList.toggle("dark-mode");
-                            break;
-                        case "hints":
-                            updateBlur();
-                            break;
-                        case "blur":
-                            // Only add blur, if blur is true
-                            updateBlur();
-                            break;
-                        case "colors":
-                            const photos = slideshow.children;
-                            for (const photo of photos) {
-                                photo.classList.toggle("img-no-colors");
-                            }                            
-                            break;
-                        default:
-                            break;
-                    }
+                    changeSetting(setting);
                 }
             });
         });
         overlayDiv.append(frag);
-
-        function showToolTip(e) {
-            if (e.target === e.currentTarget) {
-                e.target.children[0].classList.toggle("hidden");
-            }
-        }
     }
 
     // Creates the instructions overlay
@@ -166,34 +164,15 @@ export function createOverlay(type) {
     }
 }
 
-// Need to update this method to access the children elements of anime slideshow container
-export function updateBlur() {
-    const guessesObj = userGuesses[animeSelector.value];
-    const photos = slideshow.children;
-    const blurDict = { 0: "blur-xl", 1: "blur-lg", 2: "blur-md", 3: "blur-sm", 4: "blur-xs" };
-    
-    for (let i = 0; i < photos.length; i++) {
-        if (userSettings.blur && guessesObj[i].userAnswer === null) {
-            if (!userSettings.hints) { // Only use max blur if hints are off
-                removeBlurs();
-                photos[i].classList.add(blurDict[1]);
-            } else {
-                // Remove older blurs
-                removeBlurs(guessesObj[i].guessCount);
-                // Apply blur if it exists
-                if (blurDict[guessesObj[i].guessCount]){
-                    photos[i].classList.add(blurDict[guessesObj[i].guessCount]);
-                }
-            }
-        } else { // If blur is off, just reset class list
-            photos[i].classList = "img-container fade";
-        }
+export function showDescription(e) {
+    if (e.target === e.currentTarget) {
+        e.target.children[0].classList.remove("hidden");
     }
-    
-    function removeBlurs(intensity=5) {
-        for (let i = 0; i < intensity; i++) {
-            slideshow.classList.remove(blurDict[i]);
-        }
+}
+
+export function hideDescription(e) {
+    if (e.target === e.currentTarget) {
+        e.target.children[0].classList.add("hidden");
     }
 }
 
@@ -211,8 +190,3 @@ function closeOverlay(e) {
         clearOverlay();
     }
 }
-
-
-// TO DO:
-// Fix styles from settings not reflecting in other animes.
-// Blur broke again!
