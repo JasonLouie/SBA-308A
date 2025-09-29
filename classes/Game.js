@@ -87,15 +87,20 @@ class Game {
         emptyAnimeSlideshowContainer();
 
         // Update the anime slideshow container. 
-        updateAnimeSlideshowContainer(this.#animeInfo[animeId]);
+        const random = chooseRandomIndex();
+        console.log(random);
+        updateAnimeSlideshowContainer(this.#animeInfo[animeId], random);
 
+        function chooseRandomIndex() {
+            return Math.floor(Math.random() * mainCharacters.length) + 1;
+        }
     }
 
     // Initialize Anime Selector with options
     #initSelector(animeList) {
         const frag = new DocumentFragment();
         animeList.data.forEach(anime => {
-            frag.appendChild(Object.assign(document.createElement("option"), { id: anime.mal_id, value: anime.mal_id, textContent: anime.title, classList: "anime-option" }));
+            frag.appendChild(Object.assign(document.createElement("option"), { id: anime.mal_id, value: anime.mal_id, textContent: anime.title_english || anime.title, classList: "anime-option" }));
         });
         animeSelector.appendChild(frag);
     }

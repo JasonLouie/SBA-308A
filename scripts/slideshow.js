@@ -17,8 +17,8 @@ export function emptyAnimeSlideshowContainer() {
 }
 
 // Updates anime slideshow container. Add photos, but prepend to ensure anchor buttons stay at the end.
-export function updateAnimeSlideshowContainer(animeInfo) {
-    currentPicIndex = 1; // Start at the first photo each time
+export function updateAnimeSlideshowContainer(animeInfo, index=1) {
+    currentPicIndex = index; // Start at the first photo each time unless given a random index
     const mainCharacters = animeInfo.mainChars;
     const slideshowFrag = new DocumentFragment();
     const dotFrag = new DocumentFragment();
@@ -33,7 +33,7 @@ export function updateAnimeSlideshowContainer(animeInfo) {
         imgContainer.appendChild(Object.assign(document.createElement("p"), { classList: "photo-counter", textContent: `${i + 1}/${mainCharacters.length}` }));
 
         // Create the img
-        imgContainer.appendChild(Object.assign(document.createElement("img"), { classList: "char-photo", alt: `Photo of Main Character from ${animeInfo.info.title}`, src: character.images.jpg.image_url }));
+        imgContainer.appendChild(Object.assign(document.createElement("img"), { classList: "char-photo", alt: `Photo of Main Character from ${animeInfo.info.title_english || animeInfo.info.title}`, src: character.images.jpg.image_url }));
 
         // Create dots for dotNavigation
         const dot = dotFrag.appendChild(Object.assign(document.createElement("span"), {classList: "dot"}));
@@ -42,7 +42,7 @@ export function updateAnimeSlideshowContainer(animeInfo) {
 
     animeSlideshowContainer.prepend(slideshowFrag) // Prepend because the last two elements should always be the two anchor elements.
     dotNavigation.appendChild(dotFrag);
-    showPic(1);
+    showPic(currentPicIndex);
     loadAllSettings();
 }
 
