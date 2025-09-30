@@ -1,16 +1,16 @@
 // Update website based on game logic
 import { getAnimeList, getAnimeCharacters, getAnimeCharacterFullInfo } from "../scripts/apicalls.js";
 import Overlay from "./Overlay.js";
-import { hideDescription, showDescription } from "../scripts/functions.js";
+import { hideDescription, showDescription, getUsers } from "../scripts/functions.js";
 import Slideshow from "./Slideshow.js";
-import { animeSelector, form, guessButton, solvedDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navLoginSignUpDiv } from "../constants/selectors.js";
+import { animeSelector, form, guessButton, solvedDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navLoginSignUpDiv, navSignOutDiv } from "../constants/selectors.js";
 import Settings from "./Settings.js";
 import User from "./User.js";
 
 /**
  * Represents the object containing all information on an anime
  * @typedef {Object} AnimeData
- * @property {object} info = General info about the anime
+ * @property {object} info - General info about the anime
  * @property {object[]} mainChars - An array of main characters
  * @property {object[]} allChars - An array of all characters
  */
@@ -74,8 +74,22 @@ export default class Game {
      * @param {User} user 
      */
     set user(user) {
+        // Update user references
         this.#user = user;
+        this.#settings.user = user;
+        this.#overlay.user = user;
+
+        // Hide login signup
         navLoginSignUpDiv.classList.add("hidden");
+
+        // Show profile and signout
+        navSignOutDiv.classList.remove("hidden");
+
+        // Randomize anime
+        this.#chooseAnime();
+
+        // Close the overlay
+        this.#overlay.close();
     }
 
     /**
@@ -141,7 +155,7 @@ export default class Game {
 
         // Update the anime slideshow container. 
         const random = chooseRandomIndex();
-       this.#slideshow.createSlideShow(this.#animeInfo[animeId], random);
+        this.#slideshow.createSlideShow(this.#animeInfo[animeId], random);
 
         // Apply settings to slideshow
         this.#settings.loadAllSettings();
@@ -159,7 +173,7 @@ export default class Game {
      */
     async #getCharacterInfo() {
         getInfoButton.disabled = true;
-        const characterMalId = this.#animeInfo[animeSelector.value].mainChars[this.#slideshow.index-1].character.mal_id;
+        const characterMalId = this.#animeInfo[animeSelector.value].mainChars[this.#slideshow.index - 1].character.mal_id;
         const characterInfo = await getAnimeCharacterFullInfo(characterMalId);
         this.#overlay.show("characterInfo", characterInfo.data);
         getInfoButton.disabled = false;
@@ -240,7 +254,7 @@ export default class Game {
      * @param {number} index - Represents the index of the anime character and slide index
      */
     updateStats() {
-        const index = this.#slideshow.index-1;
+        const index = this.#slideshow.index - 1;
         const animeId = animeSelector.value;
         const gaveUp = this.#user.gaveUp(animeId, index);
         statsDiv.children[0].textContent = gaveUp ? `You gave up!` : `Guesses: ${this.#user.getGuessCount(animeId, index)}`;
@@ -326,6 +340,9 @@ export default class Game {
 
         // Add event listener to check user's answer
         guessButton.addEventListener("click", (e) => this.#checkAnswers(e));
+
+        // Add event listener to sign out
+        document.getElementById("signout-nav").addEventListener("click", () => this.#signout());
     }
 
     /**
@@ -341,7 +358,7 @@ export default class Game {
      * Handles user giving up on guessing the anime character
      */
     #handleGiveUp() {
-        this.#user.giveUp(animeSelector.value, this.#slideshow.index-1);
+        this.#user.giveUp(animeSelector.value, this.#slideshow.index - 1);
         this.updateStats();
     }
 
@@ -359,18 +376,18 @@ export default class Game {
         if (userAnswer.value === "") {
             return;
         }
-        const answers = this.#animeCharacterAnswers[animeId][this.#slideshow.index-1].answers;
+        const answers = this.#animeCharacterAnswers[animeId][this.#slideshow.index - 1].answers;
         // Increment guess
-        this.#user.incrementGuess(animeId, this.#slideshow.index-1);
+        this.#user.incrementGuess(animeId, this.#slideshow.index - 1);
         if (answers.has(userAnswer.value.toLowerCase())) {
             console.log("Correct answer!");
-            this.#user.storeAnswer(animeId, this.#slideshow.index-1, this.#formatAnswer(userAnswer.value.toLowerCase()));
+            this.#user.storeAnswer(animeId, this.#slideshow.index - 1, this.#formatAnswer(userAnswer.value.toLowerCase()));
         } else {
             console.log("Wrong answer");
         }
         form.reset();
         this.updateStats();
-        loadAllSettings();
+        this.#settings.loadAllSettings();
     }
 
     /**
@@ -384,22 +401,52 @@ export default class Game {
     // User related methods
 
     /**
+     * Saves user data
+     * @param {string} username - The username provided
+     * @param {string} password - The password provided
+     * @param {string} settings - The settings provided
+     * @param {string} guesses - The guesses provided
+     */
+    #saveUserData() {
+        const userData = getUsers();
+        for (const user of userData) {
+            if (user.username === this.#user.username) {
+                user.settings = this.#user.settings;
+                user.guesses = this.#user.guesses;
+                localStorage.setItem("users", JSON.stringify(userData));
+            }
+        }
+    }
+
+    /**
      * Handles user signing out
      */
-    async signout() {
+    async #signout() {
         // Only sign out if the user was signed in
-        if (user.username != undefined) {
-            // Show the login sign up div
+        if (this.#user.username != undefined) {
+            // Show the login and signup
             navLoginSignUpDiv.classList.remove("hidden");
 
+            // Hide profile and signout
+            navSignOutDiv.classList.add("hidden");
+
+            // Save user data
+            this.#saveUserData();
+
             // Create a new guest user with no login credentials
-            this.#user = new User();
+            const user = new User();
+            this.#user = user;
+            this.#settings.user = user;
+            this.#overlay.user = user;
 
             // Create general structure for character answers, user's guesses, and store anime data
             this.#initUserData();
 
             // Choose a random anime (do not provide an argument)
             await this.#chooseAnime();
+
+            // Close the overlay
+            this.#overlay.close();
         }
     }
 }

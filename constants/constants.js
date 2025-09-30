@@ -1,15 +1,15 @@
 const loginInputs = [
-    { type: "text", name: "username", placeholder: "Username", className: "field", autocomplete: "username" },
-    { type: "password", name: "password", placeholder: "Password", className: "field", autocomplete: "current-password" },
+    { type: "text", name: "username", placeholder: "Username", className: "field", autocomplete: "off", required: true },
+    { type: "password", name: "password", placeholder: "Password", className: "field", autocomplete: "off", required: true },
 ];
 const loginButtonText = "Login";
 const loginInnerHTML = `Don't have an account? <a href="#" class="signup">Sign Up</a>`;
 
 const signUpInputs = [
-    { type: "text", name: "username", placeholder: "Username", className: "field", autocomplete: "username" },
-    { type: "email", name: "email", placeholder: "Email", className: "field", autocomplete: "email" },
-    { type: "password", name: "password", placeholder: "Password", className: "field", autocomplete: "new-password" },
-    { type: "password", name: "confirmPassword", placeholder: "Confirm password", className: "field" }
+    { type: "text", name: "username", placeholder: "Username", className: "field", autocomplete: "off", required: true, minLength: 6 },
+    { type: "email", name: "email", placeholder: "Email", className: "field", autocomplete: "off", required: true },
+    { type: "password", name: "password", placeholder: "Password", className: "field", autocomplete: "off", required: true, minLength: 10 },
+    { type: "password", name: "confirmPassword", placeholder: "Confirm password", className: "field", autocomplete: "off", required: true }
 ];
 const signUpInnerHTML = `Already have an account? <a href="#" class="login">Login</a>`;
 const signUpButtonText = "Sign Up";

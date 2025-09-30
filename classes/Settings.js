@@ -13,6 +13,13 @@ export default class Settings {
     }
 
     /**
+     * @param {User} user
+     */
+    set user(user) {
+        this.#user = user;
+    }
+
+    /**
      * 
      * @param {string} setting 
      */
@@ -22,6 +29,11 @@ export default class Settings {
         this.#handleSetting(setting, settingValue);
     }
     
+    /**
+     * Handles updating the game to reflect any changes to the settings
+     * @param {string} setting - Type of setting
+     * @param {boolean} settingValue - Setting value
+     */
     #handleSetting(setting, settingValue) {
         switch (setting) {
             case "dark-mode":
@@ -55,6 +67,9 @@ export default class Settings {
         }
     }
 
+    /**
+     * Updates the image blur with respect to the hint and blur setting
+     */
     updateBlur() {
         const guessesObj = this.#user.guesses[animeSelector.value];
         const userSettings = this.#user.settings;
@@ -79,6 +94,11 @@ export default class Settings {
             }
         }
         
+        /**
+         * Removes blurs lower than the provided intensity or all blurs
+         * @param {HTMLElement} target - The element that should no longer have blurs (up until the intensity listed)
+         * @param {number} intensity - Intensity of blur
+         */
         function removeBlurs(target, intensity=5) {
             for (let i = 0; i < intensity; i++) {
                 target.classList.remove(blurDict[i]);
@@ -86,6 +106,9 @@ export default class Settings {
         }
     }
     
+    /**
+     * Updates the webpage by loading through each setting (ensures settings are properly shown)
+     */
     loadAllSettings() {
         const settings = this.#user.settings;
         for (const setting in settings){

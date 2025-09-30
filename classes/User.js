@@ -1,19 +1,17 @@
-// Used to handle accessing existing users in local storage or creating new ones
+// Used to handle users playing the game. Local storage stores users as objects instead
 import { defaultSettings } from "../constants/constants.js";
 export default class User {
     #settings;
     #username;
     #email;
-    #password;
     #characterGuesses;
     currentAnimeId;
     currentCharIndex;
     gameType;
 
-    constructor(username, email, password, settings = { ...defaultSettings }, guesses = {}) {
+    constructor(username, email, settings = { ...defaultSettings }, guesses = {}) {
         this.#username = username;
         this.#email = email;
-        this.#password = password;
         this.#settings = settings;
         this.#characterGuesses = guesses; // characters guessed for the current anime as an obj (mal_id: [{userAnswer: user_valid_guess, guessesTook: guess}])
     }
@@ -34,11 +32,6 @@ export default class User {
     // Will return a copy of user's character guesses
     get guesses() {
         return { ...this.#characterGuesses };
-    }
-
-    // Function used to verify login
-    verifyPassword(password) {
-        return this.#password === password;
     }
 
     #animeExists(animeId) {

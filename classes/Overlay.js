@@ -2,6 +2,10 @@
 import overlayDict from "../constants/constants.js";
 import { instructionsBtn, navLoginSignUpDiv, overlayDiv, settingsBtn } from "../constants/selectors.js";
 import { hideDescription, showDescription } from "../scripts/functions.js";
+import { validateSignUpUsername, validateSignUpPassword, validateEmail, validateBothPasswords } from "../scripts/signup.js";
+
+import { handleLogin, validateLogin } from "../scripts/login.js";
+import { handleSignUp } from "../scripts/signup.js";
 import Settings from "./Settings.js";
 import User from "./User.js";
 
@@ -21,6 +25,13 @@ export default class Overlay {
         this.#user = user;
         this.#settings = settings;
         this.#setUpEventListeners();
+    }
+
+    /**
+     * @param {User} user
+     */
+    set user(user) {
+        this.#user = user;
     }
     
     /**
@@ -87,9 +98,12 @@ export default class Overlay {
      * @param {string} type The type of form being created
      */
     #createForm(type) {
-        clearOverlay();
         const frag = new DocumentFragment();
+
+        // Create the container for the form
         const formContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "form-container", classList: "div-menu-container" }));
+        
+        // Create the form
         const form = formContainer.appendChild(Object.assign(document.createElement("form"), { id: `${type}-form` }));
     
         // Create h1 as a form type indicator
@@ -109,19 +123,34 @@ export default class Overlay {
         createInputs(overlayDict[type].inputs, form);
     
         // Create the submit button and recommendation
-        form.appendChild(Object.assign(document.createElement("button"), { type: "submit", id: "form-submit", textContent: `${overlayDict[type].buttonText}`, classList: `${type}-btn` }));
+        const submitBtn = form.appendChild(Object.assign(document.createElement("button"), { type: "submit", id: "form-submit", textContent: `${overlayDict[type].buttonText}`, classList: `${type}-btn` }));
         form.appendChild(Object.assign(document.createElement("p"), { id: "text-recommend", innerHTML: `${overlayDict[type].innerHTML}` }));
         overlayDiv.appendChild(frag);
-    
+        
+        // Add event listener to the submit button of the form (to handle login or signup)
+        submitBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (type === "login"){
+                handleLogin();
+            } else {
+                handleSignUp();
+            }
+        });
+
         // Add event listener to the anchor tag of the form (to switch modes)
-        overlayDiv.querySelector("a").addEventListener("click", handleOpenLoginSignUp);
+        overlayDiv.querySelector("a").addEventListener("click", (e) => this.#openLoginSignUp(e));
     
         function createInputs(inputArr, parentElement) {
             for (const input of inputArr) {
-                parentElement.appendChild(Object.assign(document.createElement("input"), input));
-                if (input.name != "confirmPassword") {
-                    parentElement.appendChild(Object.assign(document.createElement("p"), { id: `${input.name}Error`, classList: "field-error" }));
-    
+                const element = parentElement.appendChild(Object.assign(document.createElement("input"), input));
+                if (input.name === "username"){
+                    element.addEventListener("change", (e) => type === "login" ? validateLogin(e) : validateSignUpUsername(e));
+                } else if (input.name === "password"){
+                    element.addEventListener("change", (e) => type === "login" ? validateLogin(e) : validateSignUpPassword(e));
+                } else if (input.name === "email") {
+                    element.addEventListener("change", validateEmail);
+                } else if (input.name === "confirmPassword") {
+                    element.addEventListener("change", validateBothPasswords);
                 }
             }
         }
@@ -206,18 +235,23 @@ export default class Overlay {
         navLoginSignUpDiv.addEventListener("click", (e) => this.#openLoginSignUp(e));
 
         // Add event listener for closing the overlay
-        overlayDiv.addEventListener("click", (e) => this.#close(e));
+        overlayDiv.addEventListener("click", (e) => this.#closeOverlay(e));
     }
     
     /**
      * Closes the overlay
      * @param {MouseEvent} e The MouseEvent that may close the overlay div
      */
-    #close(e) {
+    #closeOverlay(e) {
         if (e.target === e.currentTarget) {
             overlayDiv.classList.add("hidden");
             this.#clear()
         }
+    }
+
+    close() {
+        overlayDiv.classList.add("hidden");
+        this.#clear()
     }
 
     /**

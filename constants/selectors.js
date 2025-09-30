@@ -23,3 +23,4 @@ export const prev = document.getElementById("slideshow-prev");
 export const settingsBtn = document.getElementById("settings-btn");
 export const instructionsBtn = document.getElementById("instructions-btn");
 export const navLoginSignUpDiv = document.getElementById("login-signup-nav");
+export const navSignOutDiv = document.getElementById("profile-signout-nav");
