@@ -3,7 +3,7 @@ import { getAnimeList, getAnimeCharacters, getAnimeCharacterFullInfo } from "../
 import Overlay from "./Overlay.js";
 import { hideDescription, showDescription, getUsers } from "../scripts/functions.js";
 import Slideshow from "./Slideshow.js";
-import { animeSelector, form, guessButton, solvedDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navLoginSignUpDiv, navSignOutDiv, signOutAnchor } from "../constants/selectors.js";
+import { animeSelector, form, guessButton, answerDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navLoginSignUpDiv, navSignOutDiv, signOutAnchor, animeSlideshowContainer, outerSlideshowContainer } from "../constants/selectors.js";
 import Settings from "./Settings.js";
 import User from "./User.js";
 
@@ -252,9 +252,9 @@ export default class Game {
                 acceptableAnswers.add(firstName);
                 displayCorrect = firstName + " " + tempArr.slice(0, -1).join(" ");
                 acceptableAnswers.add(displayCorrect);
-                if (tempArr.length === 2) {
-                    acceptableAnswers.add(tempArr[0] + " " + firstName);
-                }
+                acceptableAnswers.add(firstName + ", " + tempArr.slice(0, -1).join(" "));
+                acceptableAnswers.add(tempArr[tempArr.length-2] + " " + firstName);
+                acceptableAnswers.add(tempArr[tempArr.length-2] + ", " + firstName);
             } else { // Case for names like "Name the Title"
                 const filteredAnswerArr = correctName.split(" ");
                 acceptableAnswers.add(filteredAnswerArr[0]);
@@ -280,16 +280,29 @@ export default class Game {
         function updateGuessState(answer, user) {
             if (user.hasAnswer(animeId, index) || gaveUp) { // Case for solved or gave up
                 form.classList.add("hidden");
-                solvedDiv.classList.remove("hidden");
-                solvedDiv.querySelector("p").textContent = answer;
+                answerDiv.classList.remove("hidden");
+                answerDiv.classList.add(gaveUp ? "gaveUp" : "solved");
+                answerDiv.querySelector("p").textContent = answer;
                 giveUpButton.classList.add("hidden");
                 getInfoButton.classList.remove("hidden");
             } else {
                 form.classList.remove("hidden");
-                solvedDiv.classList.add("hidden");
+                answerDiv.classList.add("hidden");
                 giveUpButton.classList.remove("hidden");
                 getInfoButton.classList.add("hidden");
             }
+        }
+    }
+
+    #createAlert(reason, classList = "guess-error") {
+        const frag = new DocumentFragment();
+        const errorDiv = frag.appendChild(Object.assign(document.createElement("div"), {classList: classList}));
+        errorDiv.appendChild(Object.assign(document.createElement("p"), {textContent: reason}));
+        outerSlideshowContainer.appendChild(frag);
+        setTimeout(removeError, 2000);
+
+        function removeError() {
+            outerSlideshowContainer.removeChild(errorDiv);
         }
     }
 
@@ -389,16 +402,17 @@ export default class Game {
 
         // Ignore empty inputs
         if (userAnswer.value === "") {
+            this.#createAlert("Guess cannot be blank!");
             return;
         }
         const answers = this.#animeCharacterAnswers[animeId][this.#slideshow.index - 1].answers;
         // Increment guess
         this.#user.incrementGuess(animeId, this.#slideshow.index - 1);
         if (answers.has(userAnswer.value.toLowerCase())) {
-            console.log("Correct answer!");
+            this.#createAlert("Correct answer!", "correct");
             this.#user.storeAnswer(animeId, this.#slideshow.index - 1, this.#formatAnswer(userAnswer.value.toLowerCase()));
         } else {
-            console.log("Wrong answer");
+            this.#createAlert("Incorrect answer!");
         }
         form.reset();
         this.updateStats();

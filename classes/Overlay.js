@@ -116,7 +116,7 @@ export default class Overlay {
     
         // Show logo only for login form
         if (type === "login") {
-            form.appendChild(Object.assign(document.createElement("img"), { src: "", alt: "logo", id: "login-logo" }));
+            form.appendChild(Object.assign(document.createElement("div"), { id: "login-logo" }));
         }
     
         // Create inputs
@@ -143,6 +143,7 @@ export default class Overlay {
         function createInputs(inputArr, parentElement) {
             for (const input of inputArr) {
                 const element = parentElement.appendChild(Object.assign(document.createElement("input"), input));
+                element.addEventListener("blur", () => element.classList.add("interacted"), { once: true}); // Prevent invalid border on initial state. Only allow invalid after at least 1 interaction
                 if (input.name === "username"){
                     element.addEventListener("change", (e) => type === "login" ? validateLogin(e) : validateSignUpUsername(e));
                 } else if (input.name === "password"){

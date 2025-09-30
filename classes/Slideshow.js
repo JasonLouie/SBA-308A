@@ -1,6 +1,6 @@
 // Functionality for going through the slides
 import { game } from "../scripts/index.js";
-import { animeSlideshowContainer, dotNavigation, next, prev } from "../constants/selectors.js";
+import { animeSlideshowContainer, answerDiv, dotNavigation, next, prev } from "../constants/selectors.js";
 
 /**
  * Represents the anime slideshow
@@ -31,8 +31,8 @@ export default class Slideshow {
 
     /**
      * Updates anime slideshow container
-     * @param {number} animeInfo 
-     * @param {number} index 
+     * @param {number} animeInfo - AnimeData object
+     * @param {number} index - The index of the anime character that should be shown
      */
     createSlideShow(animeInfo, index = 1) {
         this.#clear();
@@ -51,8 +51,13 @@ export default class Slideshow {
             imgContainer.appendChild(Object.assign(document.createElement("p"), { classList: "photo-counter", textContent: `${i + 1}/${mainCharacters.length}` }));
 
             // Create the img
-            imgContainer.appendChild(Object.assign(document.createElement("img"), { classList: "char-photo", alt: `Photo of Main Character from ${animeInfo.info.title_english || animeInfo.info.title}`, src: character.images.jpg.image_url }));
-
+            const img = imgContainer.appendChild(Object.assign(document.createElement("img"), { classList: "char-photo", alt: `Photo of Main Character from ${animeInfo.info.title_english || animeInfo.info.title}`, src: character.images.jpg.image_url }));
+            img.addEventListener("load", () => {
+                if (img.offsetHeight < animeSlideshowContainer.offsetHeight) { // Image is too small
+                    imgContainer.classList.add("center-img-vertically");
+                }
+            });
+            
             // Create dots for dotNavigation
             const dot = dotFrag.appendChild(Object.assign(document.createElement("span"), { classList: "dot" }));
             dot.addEventListener("click", () => this.#showPic(this.#currentPicIndex = i + 1));
@@ -67,7 +72,7 @@ export default class Slideshow {
      * Handles slideshow navigation with a num relative to the current photo
      * @param {number} num - The offset in relation to the current photo
      */
-    buttonNavigate(num) {
+    #buttonNavigate(num) {
         this.#showPic(this.#currentPicIndex += num);
     }
 
@@ -101,6 +106,10 @@ export default class Slideshow {
 
         this.#hidePicsAndDots();
 
+        // Reset the classes for answerDiv
+        answerDiv.classList.remove("gaveUp");
+        answerDiv.classList.remove("solved");
+
         photos[this.#currentPicIndex - 1].classList.remove("hidden");
         dots[this.#currentPicIndex - 1].classList.add("dot-selected");
         game.updateStats();
@@ -110,7 +119,7 @@ export default class Slideshow {
      * Adds event listeners to the arrow buttons for functionality
      */
     #setUpEventListeners() {
-        next.addEventListener("click", () => this.buttonNavigate(1));
-        prev.addEventListener("click", () => this.buttonNavigate(-1));
+        next.addEventListener("click", () => this.#buttonNavigate(1));
+        prev.addEventListener("click", () => this.#buttonNavigate(-1));
     }
 }

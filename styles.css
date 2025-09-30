@@ -242,6 +242,10 @@ img.char-photo {
     overflow: hidden;
 }
 
+.center-img-vertically {
+    align-items: center;
+}
+
 .blur-xl {
     --blur-amount: 14px;
 }
@@ -357,6 +361,8 @@ a.next:hover {
 
 /* User input form styling */
 #input-container {
+    display: flex;
+    justify-content: center;
     height: 64px;
     width: 350px;
     margin-bottom: 20px;
@@ -380,6 +386,32 @@ a.next:hover {
     border-radius: 0 10px 10px 0;
 }
 
+.guess-error, .correct {
+    color: white;
+    user-select: none;
+    border-radius: 10px;
+    text-align: center;
+    height: 50px;
+    width: 200px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50%;
+}
+
+:is(.guess-error, .correct) p {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.guess-error {
+    background-color: rgba(150, 20, 40, 0.6);
+}
+
+.correct {
+    background-color: rgba(40, 150, 20, 0.6) !important;
+}
+
 #user-guess {
     border: 1px solid #2a4a8f;
     border-radius: 10px 0 0 10px;
@@ -388,20 +420,39 @@ a.next:hover {
     height: 50px;
 }
 
-.answer {
-    width: 300px;
-    height: inherit;
-}
-
-.answer p {
+#answer p {
     margin: 0;
     text-align: center;
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 600;
 }
 
-#solved {
+#answer {
+    display: flex;
+    align-items: center;
     position: relative;
+    padding: 8px 15px;
+    border-radius: 10px;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    border: 1px solid;
+}
+
+body.dark-mode .gaveUp {
+    background-color: #a4161a;
+}
+
+.gaveUp {
+    background-color: #ff758f;
+}
+
+body.dark-mode .solved {
+    background-color: #1b4332;
+}
+
+.solved {
+    background-color: #74c69d;
 }
 
 #view-desc {
@@ -432,7 +483,7 @@ a.next:hover {
 }
 
 body.dark-mode #randomize {
-    background-color: #1b2c50;
+    background-color: #023e8a;
 }
 
 #randomize {
@@ -440,11 +491,11 @@ body.dark-mode #randomize {
 }
 
 body.dark-mode #give-up {
-    background-color: #7e3402;
+    background-color: #e36414;
 }
 
 #give-up {
-    background-color: #f0aa69;
+    background-color: #faa307;
 }
 
 body.dark-mode #get-info {
@@ -463,7 +514,7 @@ body.dark-mode #get-info {
     border-radius: 10px;
     padding: 14px;
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -484,7 +535,7 @@ body.dark-mode :is(#randomize-desc, #view-desc, #get-info-desc, #give-up-desc) {
     padding: 6px;
     border-radius: 10px;
     background-color: rgba(200, 200, 200);
-    font-weight: 400;
+    font-weight: normal !important;
 }
 
 #randomize-desc {
@@ -613,14 +664,24 @@ body.dark-mode .div-menu-container {
     width: 44%;
 }
 
-#form-mode > p:first-child.selected,
+body.dark-mode #form-mode > p:first-child.selected,
 .login-btn {
     background-color: #00509d;
 }
 
-#form-mode > p:last-child.selected,
+#form-mode > p:first-child.selected,
+.login-btn {
+    background-color: #42a5f5;
+}
+
+body.dark-mode #form-mode > p:last-child.selected,
 .signup-btn {
     background-color: #f4a261;
+}
+
+#form-mode > p:last-child.selected,
+.signup-btn {
+    background-color: #ffbf69;
 }
 
 .field,
@@ -637,7 +698,7 @@ body.dark-mode .div-menu-container {
     height: 34px;
 }
 
-input.field:invalid {
+.interacted:invalid {
     border-color: red;
 }
 
@@ -673,7 +734,15 @@ input.field:invalid {
 #login-logo {
     top: 160px;
     height: 130px;
-    width: auto;
+    width: 130px;
+    background-image: url(./images/profile-light.png);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: 84% auto;
+}
+
+body.dark-mode #login-logo {
+    background-image: url(./images/profile-dark.png);
 }
 
 #login-form > [name="username"] {
