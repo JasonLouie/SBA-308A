@@ -79,6 +79,9 @@ export function propertyExists(property, value) {
     return false;
 }
 
+/**
+ * Clears all users from localStorage
+ */
 export function clearUsers() {
     localStorage.setItem("users", JSON.stringify([]));
 }
