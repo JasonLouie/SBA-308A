@@ -1,59 +1,86 @@
 // Update website based on game logic
 import { getAnimeList, getAnimeCharacters, getAnimeCharacterFullInfo } from "../scripts/apicalls.js";
-import Overlay, { hideDescription, showDescription } from "./Overlay.js";
-import { emptyAnimeSlideshowContainer, updateAnimeSlideshowContainer } from "../scripts/slideshow.js";
-import { overlayDiv, animeSelector, form, guessButton, solvedDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navButtonDiv, navAnchorDiv } from "../constants/selectors.js";
+import Overlay from "./Overlay.js";
+import { hideDescription, showDescription } from "../scripts/functions.js";
+import Slideshow from "./Slideshow.js";
+import { animeSelector, form, guessButton, solvedDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navLoginSignUpDiv } from "../constants/selectors.js";
 import Settings from "./Settings.js";
 import User from "./User.js";
+
+/**
+ * Represents the object containing all information on an anime
+ * @typedef {Object} AnimeData
+ * @property {object} info = General info about the anime
+ * @property {object[]} mainChars - An array of main characters
+ * @property {object[]} allChars - An array of all characters
+ */
 
 /**
  * Represents the game
  */
 export default class Game {
     /**
-     * Store anime data in an object { mal_id: {info: animeList.data, mainChars: [], allChars: [] } }
+     * Store anime data in an object
+     * @type {Object.<number, AnimeData>}
      */
     #animeInfo = {};
     /**
      * Store acceptable answers for each anime character in this obj. { mal_id: [ { answers: set, display: string } ] } Each index corresponds to that character's index in the array animeInfo[mal_id].mainChars
      */
     #animeCharacterAnswers = {};
-    #user; // User instance
-    #overlay; // Overlay instance
-    #settings; // Settings instance related to the user
-    #index;
+    /**
+     * User instance
+     */
+    #user;
+    /**
+     * Slideshow instance
+     */
+    #slideshow;
+    /**
+     * Overlay instance
+     */
+    #overlay;
+    /**
+     * Settings instance related to the user
+     */
+    #settings;
+    /**
+     * Game state; true for game started, false for game not started
+    */
     #gameStarted;
-    #currentCharIndex;
 
+    #index;
     /**
      * 
      * @param {User} user User instance
      */
     constructor(user) {
         this.#user = user;
-        this.#currentCharIndex = 0;
         this.#gameStarted = false;
         this.#settings = new Settings(user);
         this.#overlay = new Overlay(user, this.#settings);
+        this.#slideshow = new Slideshow();
     }
 
     get user() {
         return this.#user;
     }
 
-    get currentCharIndex() {
-        return this.#currentCharIndex;
-    }
-
     get settings() {
         return this.#settings;
     }
 
-    get overlay() {
-        return this.#overlay;
+    /**
+     * @param {User} user 
+     */
+    set user(user) {
+        this.#user = user;
+        navLoginSignUpDiv.classList.add("hidden");
     }
 
-    // Starts the game by getting the list of anime, initializing event listeners, and This function should only run once
+    /**
+     * Starts the game by getting the list of anime, initializing event listeners, and creating the general structure for the user's guesses. This function only runs once.
+     */
     async startGame() {
         try {
             if (!this.#gameStarted) {
@@ -82,7 +109,10 @@ export default class Game {
         }
     }
 
-    // Method used to choose the anime by interacting with the selector
+    /**
+     * Method used to choose the anime by interacting with the selector or to randomize the anime character and anime
+     * @param {number} animeId - The mal_id of the anime
+     */
     async #chooseAnime(animeId = this.#chooseRandomAnime()) {
         // Disable buttons until game is ready
         this.#toggleButtonState();
@@ -109,12 +139,9 @@ export default class Game {
             this.#generateAnswers(animeId);
         }
 
-        // Empty the slideshow container
-        emptyAnimeSlideshowContainer();
-
         // Update the anime slideshow container. 
         const random = chooseRandomIndex();
-        updateAnimeSlideshowContainer(this.#animeInfo[animeId], random);
+       this.#slideshow.createSlideShow(this.#animeInfo[animeId], random);
 
         // Apply settings to slideshow
         this.#settings.loadAllSettings();
@@ -127,7 +154,21 @@ export default class Game {
         }
     }
 
-    // Initialize Anime Selector with options
+    /**
+     * Handles getting info on a particular anime character
+     */
+    async #getCharacterInfo() {
+        getInfoButton.disabled = true;
+        const characterMalId = this.#animeInfo[animeSelector.value].mainChars[this.#slideshow.index-1].character.mal_id;
+        const characterInfo = await getAnimeCharacterFullInfo(characterMalId);
+        this.#overlay.show("characterInfo", characterInfo.data);
+        getInfoButton.disabled = false;
+    }
+
+    /**
+     * Initializes the game's anime selector
+     * @param {Object[]} animeList - An array of anime-related objects.
+     */
     #initSelector(animeList) {
         const frag = new DocumentFragment();
         animeList.forEach(anime => {
@@ -136,7 +177,10 @@ export default class Game {
         animeSelector.appendChild(frag);
     }
 
-    // Initialize Game Data and User Data
+    /**
+     * Initializes the game's data
+     * @param {Object[]} animeList - An array of anime-related objects.
+     */
     #initGameData(animeList) {
         animeList.forEach(anime => {
             // Game data
@@ -145,7 +189,9 @@ export default class Game {
         });
     }
 
-    // Initialize User Data
+    /**
+     * Initializes the user's data
+     */
     #initUserData() {
         Object.keys(this.#animeInfo).forEach(animeId => {
             this.#user.initGuessesOfAnime(animeId);
@@ -158,7 +204,10 @@ export default class Game {
         return animeMalIds[Math.floor(Math.random() * animeMalIds.length)];
     }
 
-    // Generate possible answers and return it as a set.
+    /**
+     * Generates possible answers as a set and the answer to show when the user guesses correctly or gives up
+     * @param {number} animeId - The mal id of the anime
+     */
     #generateAnswers(animeId) {
         this.#animeInfo[animeId].mainChars.forEach(chr => {
             const correctName = chr.character.name.toLowerCase();
@@ -186,12 +235,14 @@ export default class Game {
         });
     }
 
-    // Updates the stats and guess state for an anime character based on user interaction
-    updateStats(index = this.#index) {
-        this.#index = index;
+    /**
+     * Updates the stats and guess state for an anime character based on user interaction
+     * @param {number} index - Represents the index of the anime character and slide index
+     */
+    updateStats() {
+        const index = this.#slideshow.index-1;
         const animeId = animeSelector.value;
         const gaveUp = this.#user.gaveUp(animeId, index);
-        console.log(this.#animeInfo[animeId].mainChars === null);
         statsDiv.children[0].textContent = gaveUp ? `You gave up!` : `Guesses: ${this.#user.getGuessCount(animeId, index)}`;
         statsDiv.children[1].textContent = `Guessed: ${this.#user.getSolvedCount(animeId)}/${this.#animeInfo[animeId].mainChars.length}`;
         updateGuessState(this.#animeCharacterAnswers[animeId][index].display, this.#user);
@@ -215,14 +266,14 @@ export default class Game {
 
     /**
      * Makes the first letter of each word uppercase (assuming words separated by spaces)
-     * @param {string} name 
-     * @returns {string} 
+     * @param {string} name Anime Character's name
+     * @returns {string} String with the first letter of each word uppercase
      */
     #upper(name) {
         const romanNumerals = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi"];
         const arr = name.split(" ");
         for (let i = 0; i < arr.length; i++) {
-            if (romanNumerals.includes(arr[i])){
+            if (romanNumerals.includes(arr[i])) {
                 arr[i] = arr[i].toUpperCase();
             } else {
                 arr[i] = upperCase(arr[i]);
@@ -235,7 +286,11 @@ export default class Game {
         }
     }
 
-    // Ensure answer is stored with each first letter uppercase
+    /**
+     * Formats the user's answer while keeping any commas or dots by making the first letter of each word uppercase
+     * @param {string} answer The user's correct answer
+     * @returns {string} String with the first letter of each word as an uppercase
+     */
     #formatAnswer(answer) {
         if (answer.includes(",")) { // last names..., first name
             const arr = answer.toLowerCase().split(",");
@@ -250,18 +305,20 @@ export default class Game {
 
     // Event listener-related functions
 
-    // Set up all event listeners on the website (for static elements)
+    /**
+     * Sets up all event listeners for static elements on the website
+     */
     #setUpEventListeners() {
         // Add event listeners to the randomize button
-        randomizeButton.addEventListener("click", this.#chooseAnime());
+        randomizeButton.addEventListener("click", () => this.#chooseAnime());
         this.#addDescriptionEvent(randomizeButton);
 
         // Add event listeners to the give up button
-        giveUpButton.addEventListener("click", this.#handleGiveUp())
+        giveUpButton.addEventListener("click", () => this.#handleGiveUp())
         this.#addDescriptionEvent(giveUpButton);
 
         // Add event listeners to the get info button
-        getInfoButton.addEventListener("click", this.#getCharacterInfo());
+        getInfoButton.addEventListener("click", () => this.#getCharacterInfo());
         this.#addDescriptionEvent(getInfoButton);
 
         // Add event listener to the selector
@@ -269,38 +326,30 @@ export default class Game {
 
         // Add event listener to check user's answer
         guessButton.addEventListener("click", (e) => this.#checkAnswers(e));
-
-        // Add event listeners for settings & instructions
-        navButtonDiv.addEventListener("click", (e) => this.#overlay.openNavElement(e));
-
-        // Add event listeners for login & signup
-        navAnchorDiv.addEventListener("click", (e) => this.#overlay.openLoginSignUp(e));
-
-        overlayDiv.addEventListener("click", this.#overlay.close);
     }
 
-    // Event listener that handles getting info on a particular anime character
-    async #getCharacterInfo() {
-        getInfoButton.disabled = true;
-        const characterMalId = this.#animeInfo[animeSelector.value].mainChars[this.#index].character.mal_id;
-        const characterInfo = await getAnimeCharacterFullInfo(characterMalId);
-        this.#overlay.createCharacterInfo(characterInfo.data);
-        getInfoButton.disabled = false;
-    }
-
-    // Add description-related event listeners
+    /**
+     * Show description upon hovering over the button
+     * @param {HTMLButtonElement} button - The button that needs a description
+     */
     #addDescriptionEvent(button) {
         button.addEventListener("mouseover", showDescription);
         button.addEventListener("mouseout", hideDescription);
     }
 
-    // Event listener to handle giving up on guessing the anime character
+    /**
+     * Handles user giving up on guessing the anime character
+     */
     #handleGiveUp() {
-        this.#user.giveUp(animeSelector.value, this.#index);
+        this.#user.giveUp(animeSelector.value, this.#slideshow.index-1);
         this.updateStats();
     }
 
-    // Event listener for checking answers
+    /**
+     * Checks if the user's answer is correct
+     * @param {MouseEvent} e - The MouseEvent from clicking the button
+     * @returns 
+     */
     #checkAnswers(e) {
         e.preventDefault(); // Do not allow page refresh
         const userAnswer = form.elements["user-guess"];
@@ -310,12 +359,12 @@ export default class Game {
         if (userAnswer.value === "") {
             return;
         }
-        const answers = this.#animeCharacterAnswers[animeId][this.#index].answers;
+        const answers = this.#animeCharacterAnswers[animeId][this.#slideshow.index-1].answers;
         // Increment guess
-        this.#user.incrementGuess(animeId, this.#index);
+        this.#user.incrementGuess(animeId, this.#slideshow.index-1);
         if (answers.has(userAnswer.value.toLowerCase())) {
             console.log("Correct answer!");
-            this.#user.storeAnswer(animeId, this.#index, this.#formatAnswer(userAnswer.value.toLowerCase()));
+            this.#user.storeAnswer(animeId, this.#slideshow.index-1, this.#formatAnswer(userAnswer.value.toLowerCase()));
         } else {
             console.log("Wrong answer");
         }
@@ -324,7 +373,9 @@ export default class Game {
         loadAllSettings();
     }
 
-    // Toggle state of game-related buttons
+    /**
+     * Toggles the states of all game-related buttons
+     */
     #toggleButtonState() {
         const buttons = [guessButton, randomizeButton, giveUpButton, getInfoButton];
         buttons.forEach(button => button.disabled = !button.disabled);
@@ -332,18 +383,15 @@ export default class Game {
 
     // User related methods
 
-    // Handle a successful sign up or login by seting up the user's info
-    updateUser(user) {
-        if (user instanceof User) {
-            // Update user
-            this.#user = user;
-        }
-    }
-
-    // Handle signing out
+    /**
+     * Handles user signing out
+     */
     async signout() {
         // Only sign out if the user was signed in
         if (user.username != undefined) {
+            // Show the login sign up div
+            navLoginSignUpDiv.classList.remove("hidden");
+
             // Create a new guest user with no login credentials
             this.#user = new User();
 

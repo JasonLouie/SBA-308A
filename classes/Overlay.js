@@ -1,33 +1,63 @@
 // Make a recursive function for creating elements given an array of objects
 import overlayDict from "../constants/constants.js";
-import { overlayDiv } from "../constants/selectors.js";
+import { instructionsBtn, navLoginSignUpDiv, overlayDiv, settingsBtn } from "../constants/selectors.js";
+import { hideDescription, showDescription } from "../scripts/functions.js";
+import Settings from "./Settings.js";
+import User from "./User.js";
 
+/**
+ * Represents the overlay
+ */
 export default class Overlay {
     #user;
     #settings;
+
+    /**
+     * 
+     * @param {User} user 
+     * @param {Settings} settings 
+     */
     constructor(user, settings) {
         this.#user = user;
         this.#settings = settings;
+        this.#setUpEventListeners();
     }
-    // Handle opening login or signup form
-    openLoginSignUp(e) {
+    
+    /**
+     * Event listener that handles showing/hiding the 
+     * @param {MouseEvent} e The MouseEvent that may open the form
+     */
+    #openLoginSignUp(e) {
         if (e.target.localName === "a") {
             e.preventDefault();
-            this.#createOverlay(e.target.textContent.replace(" ", "").toLowerCase());
+            this.show(e.target.textContent.replace(" ", "").toLowerCase());
         }
     }
-    
-    // Handle opening instructions and settings overlay
-    openNavElement(e) {
-        if (e.target.classList.contains("nav-button")) {
-            e.preventDefault();
-            this.#createOverlay(e.target.id.slice(0, -4));
-        }
-    }
-    
-    // Creates and displays the character info
-    createCharacterInfo(characterInfo) {
+
+    /**
+     * Shows the overlay and some content
+     * @param {string} type The type of content
+     * @param {*} data Optional (contains the data to display)
+     */
+    show(type, data=undefined){
         overlayDiv.classList.remove("hidden");
+        this.#clear();
+        if (type === "characterInfo" && data != undefined) {
+            this.#createCharacterInfo(data)
+        } else if (type === "login" || type === "signup"){
+            this.#createForm(type);
+        } else if (type === "settings") {
+            this.#createSettings();
+        } else if (type === "instructions") {
+            this.#createInstructions();
+        }
+    }
+    
+    /**
+     * Creates the overlay that displays information on an anime character
+     * @param {object} characterInfo The data fetched from the api call made in the game
+     */
+    #createCharacterInfo(characterInfo) {
         const frag = new DocumentFragment();
         const container = frag.appendChild(Object.assign(document.createElement("div"), { id: "anime-info-container", classList: "div-menu-container" }));
         container.appendChild(Object.assign(document.createElement("h1"), { textContent: `Character Information` }));
@@ -52,21 +82,10 @@ export default class Overlay {
         }
     }
     
-    // Displays the overlay and creates the particular type
-    #createOverlay(type) {
-        overlayDiv.classList.remove("hidden");
-    
-        if (type === "login" || type === "signup") { // Login/signup form
-            this.#createForm(type);
-        } else if (type === "settings") {
-            this.#createSettings();
-        } else if (type === "instructions") {
-            this.#createInstructions();
-        }
-    
-    }
-    
-    // Creates the login or sign up form
+    /**
+     * Creates the login or sign up form
+     * @param {string} type The type of form being created
+     */
     #createForm(type) {
         clearOverlay();
         const frag = new DocumentFragment();
@@ -108,7 +127,9 @@ export default class Overlay {
         }
     }
     
-    // Creates the settings overlay
+    /**
+     * Creates the settings overlay
+     */
     #createSettings() {
         const frag = new DocumentFragment();
     
@@ -137,7 +158,7 @@ export default class Overlay {
             settingName.addEventListener("mouseout", hideDescription);
     
             // Create the option
-            const optionValue = (user.settings[setting.id]) ? " on" : "";
+            const optionValue = (this.#user.settings[setting.id]) ? " on" : "";
             const optionDiv = settingDiv.appendChild(Object.assign(document.createElement("div"), { classList: `setting-option${optionValue}` }));
             const optionBtn = optionDiv.appendChild(Object.assign(document.createElement("button"), { classList: `setting-option-btn${optionValue}` }));
     
@@ -154,8 +175,11 @@ export default class Overlay {
         overlayDiv.append(frag);
     }
     
-    // Creates the instructions overlay
+    /**
+     * Creates the instructions overlay
+     */
     #createInstructions() {
+        e.preventDefault();
         const frag = new DocumentFragment();
         const divContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "instructions-container", classList: "div-menu-container" }));
     
@@ -167,28 +191,41 @@ export default class Overlay {
     
         overlayDiv.appendChild(frag);
     }
+
+    /**
+     * Sets up all overlay-related event listeners
+     */
+    #setUpEventListeners() {
+        // Add event listener for showing settings
+        settingsBtn.addEventListener("click", () => this.show("settings"));
+
+        // Add event listener for showing instructions
+        instructionsBtn.addEventListener("click", () => this.show("instructions"));
+
+        // Add event listeners for login & signup
+        navLoginSignUpDiv.addEventListener("click", (e) => this.#openLoginSignUp(e));
+
+        // Add event listener for closing the overlay
+        overlayDiv.addEventListener("click", (e) => this.#close(e));
+    }
     
-    // Closes the overlay
-    close(e) {
+    /**
+     * Closes the overlay
+     * @param {MouseEvent} e The MouseEvent that may close the overlay div
+     */
+    #close(e) {
         if (e.target === e.currentTarget) {
             overlayDiv.classList.add("hidden");
-            // Clears the overlay
-            if (overlayDiv.firstElementChild) {
-                overlayDiv.removeChild(overlayDiv.firstElementChild);
-            }
+            this.#clear()
         }
     }
-}
 
-
-export function showDescription(e) {
-    if (e.target === e.currentTarget) {
-        e.target.children[0].classList.remove("hidden");
-    }
-}
-
-export function hideDescription(e) {
-    if (e.target === e.currentTarget) {
-        e.target.children[0].classList.add("hidden");
+    /**
+     * Clears the overlay
+     */
+    #clear() {
+        if (overlayDiv.firstElementChild) {
+            overlayDiv.removeChild(overlayDiv.firstElementChild);
+        }
     }
 }

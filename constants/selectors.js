@@ -20,7 +20,6 @@ export const next = document.getElementById("slideshow-next");
 export const prev = document.getElementById("slideshow-prev");
 
 // Navbar elements
-export const navButtonDiv = document.getElementById("nav-buttons");
-export const navAnchorDiv = document.getElementById("login-signup-nav");
-
-
+export const settingsBtn = document.getElementById("settings-btn");
+export const instructionsBtn = document.getElementById("instructions-btn");
+export const navLoginSignUpDiv = document.getElementById("login-signup-nav");
