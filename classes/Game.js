@@ -402,10 +402,6 @@ export default class Game {
 
     /**
      * Saves user data
-     * @param {string} username - The username provided
-     * @param {string} password - The password provided
-     * @param {string} settings - The settings provided
-     * @param {string} guesses - The guesses provided
      */
     #saveUserData() {
         const userData = getUsers();
