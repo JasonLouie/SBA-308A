@@ -4,7 +4,6 @@ import User from "../classes/User.js";
 import { addUser, propertyExists } from "./functions.js";
 import { overlayDiv } from "../constants/selectors.js";
 
-
 /**
  * Handles form validation for user login
 */
