@@ -388,6 +388,7 @@ export default class Game {
     #handleGiveUp() {
         this.#user.giveUp(animeSelector.value, this.#slideshow.index - 1);
         this.updateStats();
+        this.#settings.loadAllSettings();
     }
 
     /**

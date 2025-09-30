@@ -79,7 +79,7 @@ export default class Settings {
         const blurDict = { 0: "blur-xl", 1: "blur-lg", 2: "blur-md", 3: "blur-sm", 4: "blur-xs" };
         
         for (let i = 0; i < photos.length; i++) {
-            if (userSettings.blur && guessesObj[i].userAnswer === null) {
+            if (userSettings.blur && guessesObj[i].userAnswer === null && !guessesObj[i].gaveUp) {
                 if (!userSettings.hints) { // Only use max blur if hints are off
                     removeBlurs(photos[i]);
                     photos[i].classList.add(blurDict[0]);
