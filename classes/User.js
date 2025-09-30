@@ -15,15 +15,15 @@ export default class User {
         this.#settings = settings;
         this.#characterGuesses = guesses; // characters guessed for the current anime as an obj (mal_id: [{userAnswer: user_valid_guess, guessesTook: guess}])
     }
-    
+
     get username() {
         return this.#username;
     }
-    
+
     get email() {
         return this.#email;
     }
-    
+
     // Returns a copy of the user's settings
     get settings() {
         return { ...this.#settings };
@@ -42,8 +42,8 @@ export default class User {
         return this.#characterGuesses[animeId][index] != undefined;
     }
 
-    hasAnswer(animeId, index){
-        if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)){
+    hasAnswer(animeId, index) {
+        if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
             return this.#characterGuesses[animeId][index].userAnswer != null;
         }
         return false; // Entry doesn't exist so it would be false

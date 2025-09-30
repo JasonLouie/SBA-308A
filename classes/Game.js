@@ -3,7 +3,7 @@ import { getAnimeList, getAnimeCharacters, getAnimeCharacterFullInfo } from "../
 import Overlay from "./Overlay.js";
 import { hideDescription, showDescription, getUsers } from "../scripts/functions.js";
 import Slideshow from "./Slideshow.js";
-import { animeSelector, form, guessButton, solvedDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navLoginSignUpDiv, navSignOutDiv } from "../constants/selectors.js";
+import { animeSelector, form, guessButton, solvedDiv, statsDiv, randomizeButton, giveUpButton, getInfoButton, navLoginSignUpDiv, navSignOutDiv, signOutAnchor } from "../constants/selectors.js";
 import Settings from "./Settings.js";
 import User from "./User.js";
 
@@ -16,6 +16,13 @@ import User from "./User.js";
  */
 
 /**
+ * Represents the object containing the answers for all anime main characters
+ * @typedef {Object} AnimeAnswer
+ * @property {Set<string>[]} answers - The array of sets that contain acceptable answers. The array index corresponds directly to the index of the character in animeInfo[animeId].mainChars[index]
+ * @property {string} display - The correct answer to display when the user gives up or guesses successfully
+ */
+
+/**
  * Represents the game
  */
 export default class Game {
@@ -25,31 +32,35 @@ export default class Game {
      */
     #animeInfo = {};
     /**
-     * Store acceptable answers for each anime character in this obj. { mal_id: [ { answers: set, display: string } ] } Each index corresponds to that character's index in the array animeInfo[mal_id].mainChars
+     * Store acceptable answers for each anime character in this obj. Each key corresponds to that anime's index in the array animeInfo[mal_id].mainChars.
+     * @type {Object.<number, AnimeAnswer}
      */
     #animeCharacterAnswers = {};
     /**
      * User instance
+     * @type {User}
      */
     #user;
     /**
      * Slideshow instance
+     * @type {Slideshow}
      */
     #slideshow;
     /**
      * Overlay instance
+     * @type {Overlay}
      */
     #overlay;
     /**
      * Settings instance related to the user
+     * @type {Settings}
      */
     #settings;
     /**
      * Game state; true for game started, false for game not started
+     * @type {boolean}
     */
     #gameStarted;
-
-    #index;
     /**
      * 
      * @param {User} user User instance
@@ -209,13 +220,16 @@ export default class Game {
     #initUserData() {
         Object.keys(this.#animeInfo).forEach(animeId => {
             this.#user.initGuessesOfAnime(animeId);
-        })
+        });
     }
 
-    // Choose a random anime
+    /**
+     * Choose a random anime index that exists in animeInfo
+     * @returns {number} - Random anime index chosen from the keys of animeInfo
+     */
     #chooseRandomAnime() {
         const animeMalIds = Object.keys(this.#animeInfo);
-        return animeMalIds[Math.floor(Math.random() * animeMalIds.length)];
+        return Number(animeMalIds[Math.floor(Math.random() * animeMalIds.length)]);
     }
 
     /**
@@ -260,6 +274,7 @@ export default class Game {
         statsDiv.children[0].textContent = gaveUp ? `You gave up!` : `Guesses: ${this.#user.getGuessCount(animeId, index)}`;
         statsDiv.children[1].textContent = `Guessed: ${this.#user.getSolvedCount(animeId)}/${this.#animeInfo[animeId].mainChars.length}`;
         updateGuessState(this.#animeCharacterAnswers[animeId][index].display, this.#user);
+        this.saveUserData();
 
         // Hides user input form if character is guessed and shows answer.
         function updateGuessState(answer, user) {
@@ -342,7 +357,7 @@ export default class Game {
         guessButton.addEventListener("click", (e) => this.#checkAnswers(e));
 
         // Add event listener to sign out
-        document.getElementById("signout-nav").addEventListener("click", () => this.#signout());
+        signOutAnchor.addEventListener("click", () => this.#signout());
     }
 
     /**
@@ -401,15 +416,17 @@ export default class Game {
     // User related methods
 
     /**
-     * Saves user data
+     * Saves user data if user is logged in
      */
-    #saveUserData() {
-        const userData = getUsers();
-        for (const user of userData) {
-            if (user.username === this.#user.username) {
-                user.settings = this.#user.settings;
-                user.guesses = this.#user.guesses;
-                localStorage.setItem("users", JSON.stringify(userData));
+    saveUserData() {
+        if (this.#user.username != undefined) {
+            const userData = getUsers();
+            for (const user of userData) {
+                if (user.username === this.#user.username) {
+                    user.settings = this.#user.settings;
+                    user.guesses = this.#user.guesses;
+                    localStorage.setItem("users", JSON.stringify(userData));
+                }
             }
         }
     }
@@ -427,7 +444,7 @@ export default class Game {
             navSignOutDiv.classList.add("hidden");
 
             // Save user data
-            this.#saveUserData();
+            this.saveUserData();
 
             // Create a new guest user with no login credentials
             const user = new User();

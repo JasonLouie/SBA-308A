@@ -1,34 +1,120 @@
 # SBA-308A
-This is a one-page web application called Anime Guesser that prompts the user to guess a random main character based off of their photo. The anime's main characters are gathered through an additional API call based on the current anime the user is viewing. The user can navigate through all of the main characters for a particular anime and make guesses. Each anime character has its own guess-related stats, so guesses from one anime character will not carry over to the next. This enables the user to backtrack and view their previous results. The user can randomize the anime and character by pressing the randomize button. At the moment, there is no logic to handle randomization leading the user to the same exact anime or even the same exact anime and character. The user can also choose to give up on guessing and reveal the name of the anime character. The application is responsive and indicates that the user gave up. Upon successfully guessing or giving up on guessing the anime character, the user can get info on the character and read about it. All anime-related data is retrieved from the [Jikan Anime API v4](https://docs.api.jikan.moe/). 
+
+This is a one-page web application called Anime Guesser that prompts the user to guess a random main character based off of their photo. The anime's main characters are gathered through an additional API call based on the current anime the user is viewing. The user can navigate through all of the main characters for a particular anime and make guesses. Each anime character has its own guess-related stats, so guesses from one anime character will not carry over to the next. This enables the user to backtrack and view their previous results. The user can randomize the anime and character by pressing the randomize button. At the moment, there is no logic to handle the edge case of receiving the same exact anime or even the same exact anime character. The user can also choose to give up on guessing and reveal the name of the anime character. The application is responsive and indicates that the user gave up. Upon successfully guessing or giving up on guessing the anime character, the user can get info on the character and read about it. All anime-related data is retrieved from the [Jikan Anime API v4](https://docs.api.jikan.moe/).
 
 ## Files
+
 The project contains subdirectories of classes, constants, images, and scripts. Outside of the directory, it has a `styles.css` file, an `index.html` file, and this `README.md` file. The `index.html` file is very simple, but handles the core logic of the application. Without it, the game will not run at all.
 
 ### Classes Directory
+
 In the classes folder, the `Game.js` file handles the game logic itself. It strictly contains a class, `Game`, which is used in `../scripts/index.js` to create one instance of the game. The `Overlay.js` file handles all logic related to the overlay. The `Settings.js` file handles all logic related to the game's settings. Both `Settings.js` and `Overlay.js` are used in `Game.js` to create one private instance of each in order for the game to function. The `User.js` file handles the logic for users that are playing the game (mostly used to store and access data related to the user). All of these classes are modules that have a default export of their respective class.
 
 ### Constants Directory
+
 In the constants folder, the `constants.js` file contain important objects or arrays that must stay the same. Some of these constants are used to populate the overlays in `../classes/Overlay.js`, while other constants like `defaultSettings` are used as a constant to make a copy from. The `selectors.js` file contain all the selectors for static elements on the webpage. These selectors are referenced in most of the js files to prevent having to declare the selector each time.
 
 ### Images Directory
+
 The images folder contains dark and light versions of the profile, results, and settings icons. These are used as background images so that the change in styling (from dark mode to light mode) changes these indirectly with Javascript (change in game settings).
 
 ### Scripts Directory
+
 The scripts folder contains `apicalls.js`, `functions.js`, `index.js`, `login.js`, and `signup.js`. Explanations for the last three files can be found in the game logic section.
 
 #### Making API Calls
-The file `apicalls.js` handles making calls to the api using axios. There is a request and response interceptor used to log the time and duration for requests and responses. There are three different types of requests: `getAnimeList`, `getAnimeCharacters(animeId)`, and `getAnimeCharacterFullInfo(characterId)`. These requests' id correspond to the MyAnimeList ids (referred to as mal_id in the data). The first request `getAnimeList` only runs when the game starts. The anime-related info is stored in a private animeInfo object in `Game.js` and used to store most of the anime-related data from the API calls. This API call retrieves 25 TV anime with a minimum score of 8, ordered by favorites, sfw, and sorted in descending order. The API itself only allows a maximum of 25 anime to be retrieved at a time (any limit higher leads to an invalid call). At the moment, there isn't another API call to get more anime entries. This info is stored as the `info` key to the AnimeData entry of that particular animeId (the mal_id that references it). The second request `getAnimeCharacters(animeId)` retrieves all characters from a particular anime. The main characters are stored as the `mainChars` key to the AnimeData entry of that particular animeId. All characters are stored as the `allChars` key to the AnimeData entry matching a particular animeId. The third API call `getAnimeCharacterFullInfo(characterId)` is used to retrieve all info related to a specific anime character. This information is not stored and only used to populate the anime character info div in the overlay.
+
+The file `apicalls.js` handles making calls to the api using axios. There is a request and response interceptor used to log the time and duration for requests and responses. There are three different types of requests: `getAnimeList()`, `getAnimeCharacters(animeId)`, and `getAnimeCharacterFullInfo(characterId)`. These requests' id correspond to the MyAnimeList ids (referred to as mal_id in the data). The first request `getAnimeList()` only runs when the game starts. The anime-related info is stored in a private animeInfo object in `Game.js` and used to store most of the anime-related data from the API calls. This API call retrieves 25 TV anime with a minimum score of 8, ordered by favorites, sfw, and sorted in descending order. The API itself only allows a maximum of 25 anime to be retrieved at a time (any limit higher leads to an invalid call). At the moment, there isn't another API call to get more anime entries. This info is stored as the `info` key to the AnimeData entry of that particular animeId (the mal_id that references it). The second request `getAnimeCharacters(animeId)` retrieves all characters from a particular anime. The main characters are stored as the `mainChars` key to the AnimeData entry of that particular animeId. All characters are stored as the `allChars` key to the AnimeData entry matching a particular animeId. The third API call `getAnimeCharacterFullInfo(characterId)` is used to retrieve all info related to a specific anime character. This information is not stored and only used to populate the anime character info div in the overlay.
 
 #### Functions
+
 This file contains functions that are shared across modules and a couple of shared functions that could be in its own module, but haven't been separated yet. The functions that belong here are the event listeners for showing and hiding a description overlay (a tooltip for buttons and descriptions for settings). The event listeners `showDescription(e)` and `hideDescription(e)` perform their expected tasks by removing the `hidden` class and showing the `hidden` class, respectively. The rest of the functions, `getUsers()`, `getUser(username, password)`, `addUser(userObject)`, `propertyExists(property, value)`, and `clearUsers()`, are also used to access/modify the localStorage. These functions accomplish their expected tasks and are all used by `signup.js` and `login.js` (except for `clearUsers()`, which exists for testing purposes).
 
+## Important Objects and the Game Class's Private Properties
+
+This section contains a snippet of JDocs from the `Game.js` file. The types and private properties of the `Game` class will be mentioned throughout the Game Logic section.
+
+```javascript
+/**
+ * Represents the object containing all information on an anime
+ * @typedef {Object} AnimeData
+ * @property {object} info - General info about the anime
+ * @property {object[]} mainChars - An array of main characters
+ * @property {object[]} allChars - An array of all characters
+ */
+
+/**
+ * Represents the object containing the answers for all anime main characters
+ * @typedef {Object} AnimeAnswer
+ * @property {Set<string>[]} answers - The array of sets that contain acceptable answers. The array index corresponds directly to the index of the character in animeInfo[animeId].mainChars[index]
+ * @property {string} display - The correct answer to display when the user gives up or guesses successfully
+ */
+
+// Private property animeInfo from the Game class
+/**
+* Store anime data in an object
+* @type {Object.<number, AnimeData>}
+*/
+#animeInfo = {};
+
+// Private property animeCharacterAnswers from the Game class
+/**
+* Store acceptable answers for each anime character in this obj. Each key corresponds to that anime's index in the array animeInfo[mal_id].mainChars.
+* @type {Object.<number, AnimeAnswer}
+*/
+#animeCharacterAnswers = {};
+
+/**
+ * User instance
+ * @type {User}
+ */
+#user;
+
+/**
+ * Slideshow instance
+ * @type {Slideshow}
+ */
+#slideshow;
+
+/**
+ * Overlay instance
+ * @type {Overlay}
+ */
+#overlay;
+
+/**
+ * Settings instance related to the user
+ * @type {Settings}
+ */
+#settings;
+
+/**
+ * Game state; true for game started, false for game not started
+ * @type {boolean}
+*/
+#gameStarted;
+```
+
 ## Game Logic
-This section explains how the game works and what happens behind the curtains from start to end. It will cover all the essential functions in `Game.js`, `Overlay.js`, `Settings.js`, `Slideshow.js`, and `User.js`.
+
+This section explains how the game works and what happens behind the curtains from start to end. It will cover all the essential functions in `Game.js`, `Overlay.js`, `Settings.js`, `Slideshow.js`, and `User.js`. Make sure to read the previous section on important objects and properties before this section. The term animeId/anime id/mal_id all relate to the anime's particular id. The character index is the character's index in the array of main characters. The allChars object is not used yet, but will be used in future implementations to show popular supporting characters of an anime.
 
 ### Setting Up the Game
 
+This anime character guessing game heavily relies on the `Game` class in `Game.js`. The file consists of various imports from other modules to handle api calls, shared methods, the slideshow, DOM selectors, and reference the overlay, settings, and user classes. The constructor for the Game class requires a user argument to bind the game to a particular user. To handle this, the `index.js` file declares an empty user with the default settings. The Game constructor also initializes the gameStarted property as false (since the game hasn't started yet), an instance for the slideshow, and instances for settings and overlay binded to the same user. The game has getters for the user and settings instance. The class also has a custom setter that is used to handle changing the user. This is only used in `login.js` and `signup.js` to change/update the user upon successfully logging in or signing up. The setter also updates the user for the overlay and settings instances. The login/sign up div is hidden and the logout/profile div is shown (this shows that the user is logged in).
+
+### User Class
+
+This section explains the main functionaity of the `User` class.
 
 ### Starting the Game
+
+After initializing a user and game instance in `index.js`, the game can be started through the `startGame()` method. This method is async since it fetches 25 anime using the `getAnimeList()` method from `apicalls.js`. The method needs to block until the list of anime is received. After that, the method initializes the anime selector using the private `#initSelector()` method to iterate through the anime list. The method appends option elements with id and value corresponding to the anime's mal_id and the title of the anime as text content to a document fragment. The english is shown if the anime has one, otherwise it shows the title (which is sometimes the English-phonetic version of the Japanese title pertaining to the anime). creates the general structure for character answers, stores anime data. Once all options are added, the fragment is appended as a child element to the anime selector. Next, the private `#initGameData()` method is used to initialize/store game data by iterating through the anime list. It creates the general structure for each anime info entry as an AnimeData object and stores the anime's data in the key `info`. At the moment, the data is stored as is, but it should be filtered so that less memory is used. The other two keys, mainChars and allChars, are set to null. These keys will be updated in another private method, `#generateAnswers(animeId)`. The `#initGameData()` method also declares each key in `#animeCharacterAnswers` to the value of an empty array. The private `initUserData()` method iterates through each of the anime id keys in the anime info object to initialize the character guesses for each anime by calling the user's public method `initGuessesOfAnime(animeId)`.
+initializing event listeners, and creating the general structure for the user's guesses. Next, the method sets up the event listeners on the webpage for static elements using the private method `#setUpEventListeners()`. More information on the event listeners in the next section. After that, the private method `#chooseAnime(animeId?)` which has an optional argument animeId is called. As of this moment, anytime this private method is called, no argument is passed, so the default argument is a random animeId chosen from the private method `#chooseRandomAnime()`. That private method accesses the keys of the `animeInfo` private object and returns a random key from it. This public method, `startGame()` can only run once (the `#gameStarted` private property is set to true after successfully running).
+
+### Setting Up Event Listeners for Static HTMLElements
+
+The private method `#setUpEventListeners()` adds event listeners to the game-related buttons and the anime selector. The randomizeButton, giveUpButton, and getInfoButton will each contain three event listeners: "click", "mouseover", and "mouseout". The last two events handle showing and hiding the button tooltip (`showDescription(e)` and `hideDescription(e)` respectively from `functions.js`). The randomizeButton's click event listener is binded to the game's private method `this.#chooseAnime()`. The giveUpButton's click event is binded to the game's private method `this.#handleGiveUp()` which handles the user giving up on guessing the character. The getInfoButton's click event is binded to the game's private method `this.#getCharacterInfo()` which handles showing the information of a particular anime character. The animeSelector's "change" event is binded to the the game's private method `this.#chooseAnime(e.target.value)`. The guessButton's "click" event is binded to the game's private method `this.#checkAnswers(e)`, which checks if the user's guess is correct. The signOutAnchor's "click" event is binded to the game's private method of `this.#signout()` which handles signing out.
 
 ### Choosing an Anime
 

@@ -6,7 +6,7 @@ const user = new User();
 export const game = new Game(user);
 
 async function initLoad() {
-    game.startGame();
+    await game.startGame();
 }
 
 initLoad();

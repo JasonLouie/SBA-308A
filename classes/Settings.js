@@ -1,4 +1,5 @@
 import { animeSelector, animeSlideshowContainer as slideshow } from "../constants/selectors.js";
+import { game } from "../scripts/index.js";
 import User from "./User.js";
 
 export default class Settings {
@@ -25,6 +26,7 @@ export default class Settings {
      */
     changeSetting(setting) {
         this.#user.toggleSetting(setting);
+        game.saveUserData();
         const settingValue = this.#user.settings[setting];
         this.#handleSetting(setting, settingValue);
     }
