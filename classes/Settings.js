@@ -56,11 +56,13 @@ export default class Settings {
                 break;
             case "colors":
                 const photos = slideshow.children;
-                for (const photo of photos) {
-                    if (!settingValue){
-                        photo.classList.add("img-no-colors");
+                for (let i = 0; i < photos.length; i++) {
+                    const gaveUp = this.#user.gaveUp(animeSelector.value, i);
+                    const emptyAnswer = this.#user.guesses[animeSelector.value][i].userAnswer === null;
+                    if (!settingValue && !gaveUp && emptyAnswer){
+                        photos[i].classList.add("img-no-colors");
                     } else {
-                        photo.classList.remove("img-no-colors");
+                        photos[i].classList.remove("img-no-colors");
                     }
                 }
                 break;

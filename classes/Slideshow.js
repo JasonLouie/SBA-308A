@@ -51,12 +51,7 @@ export default class Slideshow {
             imgContainer.appendChild(Object.assign(document.createElement("p"), { classList: "photo-counter", textContent: `${i + 1}/${mainCharacters.length}` }));
 
             // Create the img
-            const img = imgContainer.appendChild(Object.assign(document.createElement("img"), { classList: "char-photo", alt: `Photo of Main Character from ${animeInfo.info.title_english || animeInfo.info.title}`, src: character.images.jpg.image_url }));
-            img.addEventListener("load", () => {
-                if (img.offsetHeight < animeSlideshowContainer.offsetHeight) { // Image is too small
-                    imgContainer.classList.add("center-img-vertically");
-                }
-            });
+            imgContainer.appendChild(Object.assign(document.createElement("img"), { classList: "char-photo", alt: `Photo of Main Character from ${animeInfo.info.title_english || animeInfo.info.title}`, src: character.images.jpg.image_url }));
             
             // Create dots for dotNavigation
             const dot = dotFrag.appendChild(Object.assign(document.createElement("span"), { classList: "dot" }));

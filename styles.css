@@ -235,15 +235,12 @@ img.char-photo {
 .img-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     --blur-amount: 0;
     --grayscale-amount: 0;
     filter: blur(var(--blur-amount)) grayscale(var(--grayscale-amount));
     transition: filter 0.3s ease-in-out;
     overflow: hidden;
-}
-
-.center-img-vertically {
-    align-items: center;
 }
 
 .blur-xl {
