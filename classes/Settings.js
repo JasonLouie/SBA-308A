@@ -7,14 +7,14 @@ export default class Settings {
     
     /**
      * 
-     * @param {User} user User instance
+     * @param {User} user - User instance
      */
     constructor(user) {
         this.#user = user;
     }
 
     /**
-     * @param {User} user
+     * @param {User} user - User instance
      */
     set user(user) {
         this.#user = user;
@@ -22,7 +22,7 @@ export default class Settings {
 
     /**
      * 
-     * @param {string} setting 
+     * @param {string} setting - The setting being changed
      */
     changeSetting(setting) {
         this.#user.toggleSetting(setting);
@@ -49,10 +49,10 @@ export default class Settings {
                 if (settingValue){
                     // show hints (Maybe character spelling hints?)
                 }
-                this.updateBlur(); // Update intensity of blur (static: hints off or dynamic: hints on)
+                this.#updateBlur(); // Update intensity of blur (static: hints off or dynamic: hints on)
                 break;
             case "blur":
-                this.updateBlur();
+                this.#updateBlur();
                 break;
             case "colors":
                 const photos = slideshow.children;
@@ -74,7 +74,7 @@ export default class Settings {
     /**
      * Updates the image blur with respect to the hint and blur setting
      */
-    updateBlur() {
+    #updateBlur() {
         const guessesObj = this.#user.guesses[animeSelector.value];
         const userSettings = this.#user.settings;
         const photos = slideshow.children;

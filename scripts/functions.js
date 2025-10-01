@@ -19,12 +19,24 @@ export function hideDescription(e) {
 }
 
 /**
- * @typedef {Object} UserObject
+ * Represents the object containing the user's settings
+ * @typedef {{"dark-mode": boolean, hints: boolean, blur: boolean, colors: boolean}} UserSettings - The settings of a user
+ */
+
+/**
+ * Represents the object containing a guess for a particular anime main character
+ * @typedef {Object} UserGuess - Used in User.js
+ * @property {null | string} userAnswer - The valid guess provided by the user
+ * @property {number} guessesTook - The number of guesses the user used (until they got the answer or gave up)
+ * @property {boolean} gaveUp - The boolean that represents if the user gave up
+ */
+/**
+ * @typedef {Object} UserObject - Object used to store information in the localStorage
  * @property {string} username - The username of a user
  * @property {string} email - The email address of a user
  * @property {string} password - The password of a user
- * @property {{"dark-mode": boolean, hints: boolean, blur: boolean, colors: boolean}} settings - The settings of a user
- * @property {} - The anime character guesses of a user
+ * @property {UserSettings} settings - The settings of a user
+ * @property {Object.<number, UserGuess>} guesses - The anime character guesses of a user
  */
 
 /**

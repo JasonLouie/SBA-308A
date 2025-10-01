@@ -864,8 +864,25 @@ button.on {
 
 /* Instructions styling */
 #instructions-container {
+    position: relative;
     height: 500px;
     width: 450px;
+}
+
+#instructions {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 84%;
+}
+
+#try-hints {
+    position: absolute;
+    top: 280px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 84%;
 }
 
 /* Anime Info styling */

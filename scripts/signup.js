@@ -7,22 +7,24 @@ import { overlayDiv } from "../constants/selectors.js";
 /**
  * Handles form validation for user login
 */
-export function handleSignUp() {
+export function handleSignUp(e) {
+    e.preventDefault(); // Prevent page from refreshing
     const form = document.getElementById("signup-form");
     const username = form.elements["username"];
     const email = form.elements["email"];
     const password = form.elements["password"];
     
-    const usernameError = username.checkValidity()
-    const emailError = email.checkValidity();
-    const passwordError = password.checkValidity();
+    const usernameValid = username.checkValidity()
+    const emailValid = email.checkValidity();
+    const passwordValid = password.checkValidity();
 
-    if (usernameError && emailError && passwordError) { // No errors, initiate signup
+    if (usernameValid && emailValid && passwordValid) { // No errors, initiate signup
         addUser({username: username.value, email: email.value, password: password.value, settings: game.user.settings, guesses: game.user.guesses});
         const user = new User(username.value, email.value, game.user.settings, game.user.guesses);
+        form.reset();
         game.user = user;
     }
-
+    
     password.reportValidity();
     email.reportValidity();
     username.reportValidity();
@@ -74,7 +76,7 @@ export function validateBothPasswords(e) {
     const password = form.elements["password"];
     const confirmPassword = e.target;
     if (password.value != confirmPassword.value) {
-        console.log(password.value, confirmPassword.value);
+        password.setCustomValidity("Both passwords must match.");
     } else {
         password.setCustomValidity("");
     }

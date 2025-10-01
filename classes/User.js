@@ -1,19 +1,31 @@
 // Used to handle users playing the game. Local storage stores users as objects instead
 import { defaultSettings } from "../constants/constants.js";
+/**
+ * Represents the object container a guess for a particular anime main character
+ * @typedef {Object} UserGuess
+ * @property {null | string} userAnswer - The valid guess provided by the user
+ * @property {number} guessesTook - The number of guesses the user used (until they got the answer or gave up)
+ * @property {boolean} gaveUp - The boolean that represents if the user gave up
+ */
+
+/**
+ * Handles data for the user
+ */
 export default class User {
     #settings;
     #username;
     #email;
+    /**
+     * Represents the object containing the user's valid guess for all anime main characters
+     * @type {Object.<number, UserGuess>}
+     */
     #characterGuesses;
-    currentAnimeId;
-    currentCharIndex;
-    gameType;
 
     constructor(username, email, settings = { ...defaultSettings }, guesses = {}) {
         this.#username = username;
         this.#email = email;
         this.#settings = settings;
-        this.#characterGuesses = guesses; // characters guessed for the current anime as an obj (mal_id: [{userAnswer: user_valid_guess, guessesTook: guess}])
+        this.#characterGuesses = guesses;
     }
 
     get username() {
@@ -24,24 +36,45 @@ export default class User {
         return this.#email;
     }
 
-    // Returns a copy of the user's settings
+    /**
+     * Returns a copy of the user's settings
+     */
     get settings() {
         return { ...this.#settings };
     }
 
-    // Will return a copy of user's character guesses
+    /**
+     * Returns a copy of the user's character guesses
+     */
     get guesses() {
         return { ...this.#characterGuesses };
     }
 
+    /**
+     * Checks if an anime with animeId exists in the user's character guesses
+     * @param {number} animeId - The mal_id of the anime
+     * @returns 
+     */
     #animeExists(animeId) {
         return this.#characterGuesses[animeId] != undefined;
     }
-
+    
+    /**
+     * Checks if an anime character with animeId and index exists in the user's character guesses
+     * @param {number} animeId - The mal_id of the anime
+     * @param {number} index - The index of the character
+     * @returns 
+     */
     #animeCharExists(animeId, index) {
         return this.#characterGuesses[animeId][index] != undefined;
     }
 
+    /**
+     * Checks if the user gave a valid answer for a particular anime character
+     * @param {number} animeId 
+     * @param {number} index 
+     * @returns {boolean}
+     */
     hasAnswer(animeId, index) {
         if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
             return this.#characterGuesses[animeId][index].userAnswer != null;
@@ -49,7 +82,11 @@ export default class User {
         return false; // Entry doesn't exist so it would be false
     }
 
-    // Only store answer if there wasn't an answer
+    /**
+     * Stores the successful user guess in the characterGuesses object
+     * @param {number} animeId 
+     * @param {number} index 
+     */
     storeAnswer(animeId, index, answer) {
         if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
             if (this.#characterGuesses[animeId][index].userAnswer === null && !this.gaveUp(animeId, index)) {
@@ -58,7 +95,11 @@ export default class User {
         }
     }
 
-    // Only allow giving up if user hasn't solved the answer and if they haven't yet
+    /**
+     * Used when the user gives up on guessing the anime character. Only allows giving up if user hasn't solved the answer and if they haven't given up yet
+     * @param {number} animeId 
+     * @param {number} index 
+     */
     giveUp(animeId, index) {
         if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
             if (this.#characterGuesses[animeId][index].userAnswer === null && !this.gaveUp(animeId, index)) {
@@ -67,14 +108,24 @@ export default class User {
         }
     }
 
-    // Return whether the user gave up on guessing the anime
+    /**
+     * Returns whether the user gave up on guessing the anime character
+     * @param {number} animeId 
+     * @param {number} index 
+     * @returns 
+     */
     gaveUp(animeId, index) {
         if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
             return this.#characterGuesses[animeId][index].gaveUp;
         }
     }
 
-    // Only increment the guess when the user hasn't found the answer yet
+    // 
+    /**
+     * Increment the guessCount when the user hasn't found the answer yet and if they haven't given up yet.
+     * @param {number} animeId 
+     * @param {number} index 
+     */
     incrementGuess(animeId, index) {
         if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
             if (this.#characterGuesses[animeId][index].userAnswer === null && !this.gaveUp(animeId, index)) {
@@ -83,7 +134,11 @@ export default class User {
         }
     }
 
-    // Returns number of anime characters solved guessed for that anime
+    /**
+     * Returns number of anime characters solved guessed for that anime if it exists. Otherwise it returns -1
+     * @param {number} animeId 
+     * @returns {number}
+     */
     getSolvedCount(animeId) {
         if (this.#animeExists(animeId)) {
             let solved = 0;
@@ -98,7 +153,12 @@ export default class User {
         }
     }
 
-    // Returns number of guesses the user entered
+    /**
+     * Returns the guess count of an anime's main character if they exist. Otherwise it returns -1
+     * @param {number} animeId 
+     * @param {number} index
+     * @returns {number}
+     */
     getGuessCount(animeId, index) {
         if (this.#animeExists(animeId) && this.#animeCharExists(animeId, index)) {
             return this.#characterGuesses[animeId][index].guessCount;
@@ -106,7 +166,10 @@ export default class User {
         return -1; // Negative guess count for entry that doesn't exist
     }
 
-    // Toggle the specific user setting
+    /**
+     * Toggles the specific user setting
+     * @param {"dark-mode" | "hints" | "blur" | "colors"} setting - Setting being changed
+     */
     toggleSetting(setting) {
         // Prevent referencing settings that don't exist
         if (this.#settings[setting] != undefined) {
@@ -114,13 +177,20 @@ export default class User {
         }
     }
 
-    // Initialize empty array for a particular anime
+    /**
+     * Initializes empty array for a particular anime
+     * @param {number} animeId 
+     */
     initGuessesOfAnime(animeId) {
         // Only allow initialization if the entry with key = animeId does not exist
         this.#characterGuesses[animeId] = this.#characterGuesses[animeId] || [];
     }
 
-    // Update characterGuesses by initializing the object representing the user's guess for the character
+    /**
+     * Updates characterGuesses by initializing the object representing the user's guess for the character
+     * @param {number} animeId 
+     * @param {number} numChars 
+     */
     initCharGuessesOfAnime(animeId, numChars) {
         // Only allow initialization if that anime's character array of objs is empty
         if (this.#characterGuesses[animeId].length === 0) {

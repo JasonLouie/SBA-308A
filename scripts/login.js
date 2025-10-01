@@ -7,7 +7,8 @@ import User from "../classes/User.js";
 /**
  * Handles form validation for user login
  */
-export function handleLogin() {
+export function handleLogin(e) {
+    e.preventDefault(); // Prevent page from refreshing
     const form = document.getElementById("login-form");
     const username = form.elements["username"];
     const password = form.elements["password"];
@@ -18,11 +19,12 @@ export function handleLogin() {
     if (usernameValid && passwordValid) { // No errors, initiate login
         const userObj = getUser(username.value, password.value);
         const user = new User(username.value, userObj.email, userObj.settings, userObj.guesses);
+        form.reset();
         game.user = user;
     }
 
-    password.reportValidity();
     username.reportValidity();
+    password.reportValidity();
 }
 
 /**
@@ -50,12 +52,20 @@ export function validateLogin(e) {
         const username = e.target;
         if (!propertyExists(e.target.name, username.value)) {
             username.setCustomValidity("That username does not exist.");
+        } else {
+            username.setCustomValidity("");
         }
     } else if (e.target.name === "password") {
         const username = form.elements["username"];
         const password = e.target;
-        if (!validateCredentials(username.value, password.value)) {
+        if (!propertyExists(e.target.name, username.value)) {
+            username.setCustomValidity("That username does not exist.");
+            username.reportValidity();
+            return;
+        } else if (!validateCredentials(username.value, password.value)) {
             password.setCustomValidity("Incorrect password.");
+        } else {
+            password.setCustomValidity("");
         }
     }
     e.target.reportValidity();

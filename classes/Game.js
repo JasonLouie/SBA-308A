@@ -294,6 +294,11 @@ export default class Game {
         }
     }
 
+    /**
+     * Creates an alert that informs the user about their guess
+     * @param {string} reason - The reason for displaying the alert
+     * @param {string} classList - The custom class list to use
+     */
     #createAlert(reason, classList = "guess-error") {
         const frag = new DocumentFragment();
         const errorDiv = frag.appendChild(Object.assign(document.createElement("div"), {classList: classList}));

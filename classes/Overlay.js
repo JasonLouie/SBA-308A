@@ -33,7 +33,7 @@ export default class Overlay {
     set user(user) {
         this.#user = user;
     }
-    
+
     /**
      * Event listener that handles showing/hiding the 
      * @param {MouseEvent} e The MouseEvent that may open the form
@@ -50,12 +50,12 @@ export default class Overlay {
      * @param {string} type The type of content
      * @param {*} data Optional (contains the data to display)
      */
-    show(type, data=undefined){
+    show(type, data = undefined) {
         overlayDiv.classList.remove("hidden");
         this.#clear();
         if (type === "characterInfo" && data != undefined) {
             this.#createCharacterInfo(data)
-        } else if (type === "login" || type === "signup"){
+        } else if (type === "login" || type === "signup") {
             this.#createForm(type);
         } else if (type === "settings") {
             this.#createSettings();
@@ -63,7 +63,7 @@ export default class Overlay {
             this.#createInstructions();
         }
     }
-    
+
     /**
      * Creates the overlay that displays information on an anime character
      * @param {object} characterInfo The data fetched from the api call made in the game
@@ -83,7 +83,7 @@ export default class Overlay {
         const aboutDiv = container.appendChild(Object.assign(document.createElement("div"), { id: "div-about" }));
         aboutDiv.appendChild(Object.assign(document.createElement("pre"), { id: "about", innerHTML: `<span class="info-heading">About</span>\n${characterInfo.about}` }));
         overlayDiv.append(frag);
-    
+
         function createVAInfo(language) {
             const voiceActors = characterInfo.voices.filter(actor => actor.language === language);
             const ul = voiceActorsDiv.appendChild(Object.assign(document.createElement("ul"), { textContent: `${language} Voice Actor${(voiceActors.length === 1) ? "" : "s"}`, classList: "voice-actors-ul" }));
@@ -92,7 +92,7 @@ export default class Overlay {
             });
         }
     }
-    
+
     /**
      * Creates the login or sign up form
      * @param {string} type The type of form being created
@@ -102,51 +102,44 @@ export default class Overlay {
 
         // Create the container for the form
         const formContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "form-container", classList: "div-menu-container" }));
-        
+
         // Create the form
         const form = formContainer.appendChild(Object.assign(document.createElement("form"), { id: `${type}-form` }));
-    
+
+        // Add event listener to the submit button of the form (to handle login or signup)
+        form.addEventListener("submit", (type === "login") ? handleLogin : handleSignUp);
+
         // Create h1 as a form type indicator
         form.appendChild(Object.assign(document.createElement("h1"), { textContent: `${overlayDict[type].buttonText}` }))
-    
+
         // Create form mode indicator
         const formMode = form.appendChild(Object.assign(document.createElement("div"), { id: "form-mode" }));
         formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "login") ? "selected" : "unselected"}`, textContent: "Login" }));
         formMode.appendChild(Object.assign(document.createElement("p"), { classList: `form-type ${(type === "signup") ? "selected" : "unselected"}`, textContent: "Sign Up" }));
-    
+
         // Show logo only for login form
         if (type === "login") {
             form.appendChild(Object.assign(document.createElement("div"), { id: "login-logo" }));
         }
-    
+
         // Create inputs
         createInputs(overlayDict[type].inputs, form);
-    
+
         // Create the submit button and recommendation
-        const submitBtn = form.appendChild(Object.assign(document.createElement("button"), { type: "submit", id: "form-submit", textContent: `${overlayDict[type].buttonText}`, classList: `${type}-btn` }));
+        form.appendChild(Object.assign(document.createElement("button"), { type: "submit", id: "form-submit", textContent: `${overlayDict[type].buttonText}`, classList: `${type}-btn` }));
         form.appendChild(Object.assign(document.createElement("p"), { id: "text-recommend", innerHTML: `${overlayDict[type].innerHTML}` }));
         overlayDiv.appendChild(frag);
-        
-        // Add event listener to the submit button of the form (to handle login or signup)
-        submitBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            if (type === "login"){
-                handleLogin();
-            } else {
-                handleSignUp();
-            }
-        });
 
         // Add event listener to the anchor tag of the form (to switch modes)
         overlayDiv.querySelector("a").addEventListener("click", (e) => this.#openLoginSignUp(e));
-    
+
         function createInputs(inputArr, parentElement) {
             for (const input of inputArr) {
                 const element = parentElement.appendChild(Object.assign(document.createElement("input"), input));
-                element.addEventListener("blur", () => element.classList.add("interacted"), { once: true}); // Prevent invalid border on initial state. Only allow invalid after at least 1 interaction
-                if (input.name === "username"){
+                element.addEventListener("blur", () => element.classList.add("interacted"), { once: true }); // Prevent invalid border on initial state. Only allow invalid after at least 1 interaction
+                if (input.name === "username") {
                     element.addEventListener("change", (e) => type === "login" ? validateLogin(e) : validateSignUpUsername(e));
-                } else if (input.name === "password"){
+                } else if (input.name === "password") {
                     element.addEventListener("change", (e) => type === "login" ? validateLogin(e) : validateSignUpPassword(e));
                 } else if (input.name === "email") {
                     element.addEventListener("change", validateEmail);
@@ -156,42 +149,42 @@ export default class Overlay {
             }
         }
     }
-    
+
     /**
      * Creates the settings overlay
      */
     #createSettings() {
         const frag = new DocumentFragment();
-    
+
         // Create the container
         const settingsContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "settings-container", classList: "div-menu-container" }));
-    
+
         // Create the h1
         settingsContainer.appendChild(Object.assign(document.createElement("h1"), { textContent: "Settings" }));
-    
+
         // Create the div that holds all settings
         const settingsList = settingsContainer.appendChild(Object.assign(document.createElement("div"), { id: "settings-list" }));
-    
+
         // Populate the div's contents
         overlayDict["settings"].forEach(setting => {
             // Outer div for setting
             const settingDiv = settingsList.appendChild(Object.assign(document.createElement("div"), { id: setting.id, classList: setting.classList }));
-    
+
             // p containing name of the setting
             const settingName = settingDiv.appendChild(Object.assign(document.createElement("p"), { textContent: setting.textContent, classList: "setting-name" }));
-    
+
             // Add tooltip to setting name
             settingName.appendChild(Object.assign(document.createElement("span"), { textContent: setting.description, classList: "setting-desc hidden" }));
-    
+
             // Add event listener to show/hide tooltip
             settingName.addEventListener("mouseover", showDescription);
             settingName.addEventListener("mouseout", hideDescription);
-    
+
             // Create the option
             const optionValue = (this.#user.settings[setting.id]) ? " on" : "";
             const optionDiv = settingDiv.appendChild(Object.assign(document.createElement("div"), { classList: `setting-option${optionValue}` }));
             const optionBtn = optionDiv.appendChild(Object.assign(document.createElement("button"), { classList: `setting-option-btn${optionValue}` }));
-    
+
             // Add event listener to toggle setting on/off
             optionBtn.addEventListener("click", (e) => {
                 if (e.target === e.currentTarget) {
@@ -204,21 +197,23 @@ export default class Overlay {
         });
         overlayDiv.append(frag);
     }
-    
+
     /**
      * Creates the instructions overlay
      */
     #createInstructions() {
-        e.preventDefault();
         const frag = new DocumentFragment();
         const divContainer = frag.appendChild(Object.assign(document.createElement("div"), { id: "instructions-container", classList: "div-menu-container" }));
-    
+
         // Create h1 to inform user that these are the instructions
         divContainer.appendChild(Object.assign(document.createElement("h1"), { textContent: "How To Play" }));
-    
+
         // Create p to explain how to play
-        divContainer.appendChild(Object.assign(document.createElement("p"), { id: "instructions" }));
-    
+        divContainer.appendChild(Object.assign(document.createElement("p"), { id: "instructions", textContent: "Look at the picture of the anime character and identify who the character is. Press the randomize button to choose another character and anime. Click on the selector to choose a specific anime. Press the arrows to navigate through all the main characters for a particular anime. The only 'free' hint is the anime title shown in the selector." }));
+
+        // Create p to convince user to try using hints and to have fun
+        divContainer.appendChild(Object.assign(document.createElement("p"), { id: "try-hints", textContent: "Too easy? Consider removing photo colors and adding image blur or try playing without hints. Answers are not case sensitive, but characters must be spelled correctly. Have fun and try your best!" }));
+
         overlayDiv.appendChild(frag);
     }
 
@@ -238,7 +233,7 @@ export default class Overlay {
         // Add event listener for closing the overlay
         overlayDiv.addEventListener("click", (e) => this.#closeOverlay(e));
     }
-    
+
     /**
      * Closes the overlay
      * @param {MouseEvent} e The MouseEvent that may close the overlay div
